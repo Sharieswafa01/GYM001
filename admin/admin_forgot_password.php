@@ -2,7 +2,6 @@
 session_start();
 include("../user/db_connection.php"); // DB connection
 
-// ✅ Load PHPMailer from Composer
 require __DIR__ . '/../vendor/autoload.php';
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
@@ -13,44 +12,35 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $email = trim($_POST['email']);
 
     if (!empty($email)) {
-        // Check if email exists in admin table
         $stmt = $conn->prepare("SELECT * FROM admin WHERE email = ?");
         $stmt->bind_param("s", $email);
         $stmt->execute();
         $result = $stmt->get_result();
 
         if ($result->num_rows > 0) {
-            // Generate OTP & expiry
             $otp = rand(100000, 999999);
-            $expiry = date("Y-m-d H:i:s", time() + 300); // 5 minutes
+            $expiry = date("Y-m-d H:i:s", time() + 300);
 
-            // Save OTP in DB
             $update = $conn->prepare("UPDATE admin SET otp = ?, otp_expiry = ? WHERE email = ?");
             $update->bind_param("iss", $otp, $expiry, $email);
             $update->execute();
 
-            // Store email in session for OTP verification
             $_SESSION['reset_email'] = $email;
 
-            // ✅ Send OTP via PHPMailer
             $mail = new PHPMailer(true);
-
             try {
-                // Server settings
-                $mail->SMTPDebug  = 0; // change to 2 if you want to debug SMTP issues
+                $mail->SMTPDebug  = 0;
                 $mail->isSMTP();
                 $mail->Host       = 'smtp.gmail.com';  
                 $mail->SMTPAuth   = true;
-                $mail->Username   = 'yourgmail@gmail.com';       // ⬅️ your Gmail address
-                $mail->Password   = 'your_app_password';         // ⬅️ Gmail App Password (NOT your normal password)
+                $mail->Username   = 'yourgmail@gmail.com';
+                $mail->Password   = 'your_app_password';
                 $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
                 $mail->Port       = 587;
 
-                // Recipients
                 $mail->setFrom('yourgmail@gmail.com', 'GYM Admin');
                 $mail->addAddress($email);
 
-                // Content
                 $mail->isHTML(true);
                 $mail->Subject = "Admin Password Reset OTP";
                 $mail->Body    = "Your OTP code is: <b>$otp</b><br><br>This code will expire in 5 minutes.";
@@ -63,7 +53,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             } catch (Exception $e) {
                 $message = "❌ Failed to send OTP. Mailer Error: {$mail->ErrorInfo}";
             }
-
         } else {
             $message = "❌ No admin account found with that email.";
         }
@@ -80,7 +69,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <style>
         body {
             font-family: Arial, sans-serif;
-            background: linear-gradient(120deg, #3a6186, #89253e);
+            background: url('images/forgotpassword.png') no-repeat center center fixed; /* ✅ Correct path */
+            background-size: cover;
             height: 100vh;
             margin: 0;
             display: flex;
@@ -88,10 +78,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             align-items: center;
         }
         .container {
-            background: rgba(255, 255, 255, 0.95);
+            background: rgba(255, 255, 255, 0.92);
             padding: 30px;
             border-radius: 12px;
-            box-shadow: 0px 5px 20px rgba(0, 0, 0, 0.3);
+            box-shadow: 0px 5px 20px rgba(0, 0, 0, 0.4);
             width: 350px;
             text-align: center;
         }
@@ -126,9 +116,30 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             font-size: 13px;
             color: #333;
         }
+        .back-arrow {
+            position: fixed;
+            top: 20px;
+            left: 30px;
+            font-size: 16px;
+            text-decoration: none;
+            background-color: rgba(255, 255, 255, 0.9);
+            color: #000;
+            padding: 8px 14px;
+            border-radius: 6px;
+            font-weight: bold;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+        .back-arrow:hover {
+            background-color: #00ff99;
+            color: #000;
+        }
     </style>
 </head>
 <body>
+    <a href="admin_login.php" class="back-arrow">←</a>
+
     <div class="container">
         <h2>Forgot Password</h2>
         <form method="POST" action="">
