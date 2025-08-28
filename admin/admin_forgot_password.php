@@ -2,6 +2,11 @@
 session_start();
 include("../user/db_connection.php"); // DB connection
 
+// ✅ Load PHPMailer from Composer
+require __DIR__ . '/../vendor/autoload.php';
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception;
+
 $message = "";
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
@@ -27,19 +32,36 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             // Store email in session for OTP verification
             $_SESSION['reset_email'] = $email;
 
-            // Email details
-            $subject = "Admin Password Reset OTP";
-            $body = "Your OTP code is: $otp\n\nThis code will expire in 5 minutes.\n\nIf you did not request this, please ignore.";
-            $headers = "From: noreply@yourdomain.com\r\n";
-            $headers .= "Reply-To: noreply@yourdomain.com\r\n";
-            $headers .= "X-Mailer: PHP/" . phpversion();
+            // ✅ Send OTP via PHPMailer
+            $mail = new PHPMailer(true);
 
-            // Send OTP via email
-            if (mail($email, $subject, $body, $headers)) {
+            try {
+                // Server settings
+                $mail->SMTPDebug  = 0; // change to 2 if you want to debug SMTP issues
+                $mail->isSMTP();
+                $mail->Host       = 'smtp.gmail.com';  
+                $mail->SMTPAuth   = true;
+                $mail->Username   = 'yourgmail@gmail.com';       // ⬅️ your Gmail address
+                $mail->Password   = 'your_app_password';         // ⬅️ Gmail App Password (NOT your normal password)
+                $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+                $mail->Port       = 587;
+
+                // Recipients
+                $mail->setFrom('yourgmail@gmail.com', 'GYM Admin');
+                $mail->addAddress($email);
+
+                // Content
+                $mail->isHTML(true);
+                $mail->Subject = "Admin Password Reset OTP";
+                $mail->Body    = "Your OTP code is: <b>$otp</b><br><br>This code will expire in 5 minutes.";
+                $mail->AltBody = "Your OTP code is: $otp (expires in 5 minutes).";
+
+                $mail->send();
                 header("Location: admin_verify_otp.php");
                 exit();
-            } else {
-                $message = "❌ Failed to send OTP. Please check your email settings.";
+
+            } catch (Exception $e) {
+                $message = "❌ Failed to send OTP. Mailer Error: {$mail->ErrorInfo}";
             }
 
         } else {
