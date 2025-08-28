@@ -1,0 +1,77 @@
+body {
+    font-family: Arial, sans-serif;
+    background-image: url('../../images/gym-bg.jpg');
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    color: #fff;
+    position: relative;
+    min-height: 100vh;
+    margin: 0;
+    padding: 0;
+}
+
+.back-arrow {
+    position: absolute;
+    top: 20px;
+    left: 30px; /* LEFT SIDE instead of right */
+    font-size: 16px;
+    text-decoration: none;
+    background-color: rgba(255, 255, 255, 0.9);
+    color: #000;
+    padding: 8px 14px;
+    border-radius: 6px;
+    font-weight: bold;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    transition: all 0.3s ease;
+    z-index: 1000;
+}
+
+.back-arrow:hover {
+    background-color: #00ff99;
+    color: #000;
+}
+
+.container {
+    background-color: rgba(0, 0, 0, 0.85);
+    padding: 30px;
+    margin: 50px auto;
+    border-radius: 12px;
+    width: 95%;
+    max-width: 1100px;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.7);
+}
+
+h2 {
+    text-align: center;
+    color: #00ff99;
+    margin-bottom: 25px;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: rgba(255, 255, 255, 0.97);
+    color: #000;
+}
+
+th, td {
+    padding: 12px;
+    border-bottom: 1px solid #ccc;
+    text-align: center;
+}
+
+th {
+    background-color: #060606;
+    color: #fff;
+}
+
+.status-login {
+    color: green;
+    font-weight: bold;
+}
+
+.status-logout {
+    color: red;
+    font-weight: bold;
+}
