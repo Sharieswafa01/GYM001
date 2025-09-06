@@ -3,7 +3,7 @@
 $hashed_password = password_hash('admin123', PASSWORD_DEFAULT); // Hash the password
 
 // Database connection
-$conn = new mysqli('localhost', 'root', '', 'gym_management');
+$conn = new mysqli('127.0.0.1', 'root', '', 'gym_management');
 if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
@@ -18,4 +18,3 @@ if ($conn->query($sql) === TRUE) {
 }
 
 $conn->close();
-?>

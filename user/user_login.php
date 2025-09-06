@@ -15,7 +15,7 @@ $lastLoggedOutUser = $loggedOutRecently ? $_SESSION['last_logged_out_user_info']
 
 
 // Database connection
-$servername = "localhost";
+$servername = "127.0.0.1";
 $username = "root";
 $password = "";
 $dbname = "gym_management";
@@ -40,6 +40,7 @@ $conn->close();
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <title>User Login - CTU Danao Gym</title>
@@ -60,16 +61,19 @@ $conn->close();
             font-weight: bold;
             text-align: center;
         }
+
         .login-success {
             background-color: #d4edda;
             color: #155724;
             border: 1px solid #c3e6cb;
         }
+
         .logout-success {
             background-color: #cce5ff;
             color: #004085;
             border: 1px solid #b8daff;
         }
+
         .error {
             background-color: #f8d7da;
             color: #721c24;
@@ -90,11 +94,12 @@ $conn->close();
             display: flex;
             background: #fff;
             border-radius: 12px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
             overflow: hidden;
         }
 
-        .left-section, .right-section {
+        .left-section,
+        .right-section {
             width: 50%;
             padding: 20px;
         }
@@ -105,6 +110,7 @@ $conn->close();
             gap: 10px;
             margin-bottom: 20px;
         }
+
         .logo-text {
             font-weight: bold;
             font-size: 20px;
@@ -174,7 +180,7 @@ $conn->close();
             background: #fff;
             border-radius: 10px;
             padding: 20px;
-            box-shadow: 0 0 8px rgba(0,0,0,0.1);
+            box-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
             font-size: 14px;
             margin-top: 20px;
         }
@@ -216,110 +222,112 @@ $conn->close();
         }
     </style>
 </head>
+
 <body>
-<div class="wrapper">
+    <div class="wrapper">
 
 
-    <div class="container">
-        <div class="left-section">
-            <div class="logo-container">
-                <img src="images/ctu_logo.png" alt="CTU Logo" style="max-width: 40px; max-height: 40px; border: 1px solid #ccc;">
-                <span class="logo-text">CTU GYMTECH</span>
+        <div class="container">
+            <div class="left-section">
+                <div class="logo-container">
+                    <img src="images/ctu_logo.png" alt="CTU Logo" style="max-width: 40px; max-height: 40px; border: 1px solid #ccc;">
+                    <span class="logo-text">CTU GYMTECH</span>
+                </div>
+
+                <form method="POST">
+                    <label for="user_id">ID NO:</label>
+                    <input type="text" name="user_id" id="user_id" required autocomplete="off">
+
+                    <div class="form-buttons">
+                        <button type="submit" formaction="process_login.php" class="login-btn">Login</button>
+                        <button type="submit" formaction="process_logout.php" class="logout-btn">Logout</button>
+                    </div>
+                </form>
+
+                <a href="signup.php" class="signup-link">Register</a>
             </div>
 
-            <form method="POST">
-                <label for="user_id">ID NO:</label>
-                <input type="text" name="user_id" id="user_id" required autocomplete="off">
+            <div class="right-section">
+                <h2>User Information</h2>
 
-                <div class="form-buttons">
-                    <button type="submit" formaction="process_login.php" class="login-btn">Login</button>
-                    <button type="submit" formaction="process_logout.php" class="logout-btn">Logout</button>
-                </div>
-            </form>
-
-            <a href="signup.php" class="signup-link">Register</a>
-        </div>
-
-        <div class="right-section">
-            <h2>User Information</h2>
-
-            <?php if (isset($_SESSION['notification'])): ?>
-                <div class="notification <?= htmlspecialchars($_SESSION['notification_type']) ?>">
-                    <?= htmlspecialchars($_SESSION['notification']) ?>
-                </div>
-                <?php unset($_SESSION['notification'], $_SESSION['notification_type']); ?>
-            <?php endif; ?>
-
-            <?php if (isset($_SESSION['message'])): ?>
-                <div class="notification <?= htmlspecialchars($_SESSION['message_type'] ?? 'error') ?>">
-                    <?= htmlspecialchars($_SESSION['message']) ?>
-                </div>
-                <?php unset($_SESSION['message'], $_SESSION['message_type']); ?>
-            <?php endif; ?>
-
-            <?php
-            // Logic to display user information: prioritize current login, then last logout
-            $displayUser = null;
-            $displayLoginTime = null;
-            $displayLogoutTime = null;
-
-            if ($loggedIn && $currentUser) {
-                // If currently logged in, display current user info
-                $displayUser = $currentUser;
-                $displayLoginTime = $currentUser['login_time'];
-                // Reset last_logged_out_user_info if a new user logs in
-                unset($_SESSION['last_logged_out_user_info']);
-            } elseif ($loggedOutRecently && $lastLoggedOutUser) {
-                // If no one is currently logged in, but someone just logged out, display their info
-                $displayUser = $lastLoggedOutUser;
-                // Assuming login_time might still be part of lastLoggedOutUser if captured from logged_users
-                $displayLoginTime = $lastLoggedOutUser['login_time'] ?? 'N/A';
-                $displayLogoutTime = $lastLoggedOutUser['logout_time'];
-            }
-
-            if ($displayUser):
-            ?>
-                <div class="user-info">
-                    <p><strong>Name:</strong> <?= htmlspecialchars($displayUser['name'] ?? 'N/A') ?></p>
-                    <p><strong>Age:</strong> <?= htmlspecialchars($displayUser['age'] ?? 'N/A') ?></p>
-                    <p><strong>Gender:</strong> <?= htmlspecialchars($displayUser['gender'] ?? 'N/A') ?></p>
-                    <p><strong>Role:</strong> <?= htmlspecialchars($displayUser['type'] ?? 'N/A') ?></p>
-
-                    <?php if (isset($displayUser['type']) && $displayUser['type'] == 'Student'): ?>
-                        <p><strong>Course:</strong> <?= htmlspecialchars($displayUser['course'] ?? 'N/A') ?></p>
-                        <p><strong>Section:</strong> <?= htmlspecialchars($displayUser['section'] ?? 'N/A') ?></p>
-                    <?php endif; ?>
-
-                    <?php if ($displayLoginTime): ?>
-                        <p><strong>Login Time:</strong> <?= htmlspecialchars($displayLoginTime) ?></p>
-                    <?php endif; ?>
-
-                    <?php if ($displayLogoutTime): ?>
-                        <p><strong>Logout Time:</strong> <?= htmlspecialchars($displayLogoutTime) ?></p>
-                    <?php endif; ?>
-                </div>
-            <?php else: ?>
-                <p>Please login to view your information.</p>
-            <?php endif; ?>
-        </div>
-    </div>
-
-    <div class="container">
-        <div class="announcement-box">
-            <h3>Latest Announcements</h3>
-            <?php if (!empty($announcements)): ?>
-                <?php foreach ($announcements as $announcement): ?>
-                    <div class="announcement-item">
-                        <div class="announcement-title"><?= htmlspecialchars($announcement['title']) ?></div>
-                        <div class="announcement-date"><?= date("M j, Y g:i A", strtotime($announcement['created_at'])) ?></div>
-                        <div class="announcement-message"><?= nl2br(htmlspecialchars($announcement['message'])) ?></div>
+                <?php if (isset($_SESSION['notification'])): ?>
+                    <div class="notification <?= htmlspecialchars($_SESSION['notification_type']) ?>">
+                        <?= htmlspecialchars($_SESSION['notification']) ?>
                     </div>
-                <?php endforeach; ?>
-            <?php else: ?>
-                <p>No announcements posted yet.</p>
-            <?php endif; ?>
+                    <?php unset($_SESSION['notification'], $_SESSION['notification_type']); ?>
+                <?php endif; ?>
+
+                <?php if (isset($_SESSION['message'])): ?>
+                    <div class="notification <?= htmlspecialchars($_SESSION['message_type'] ?? 'error') ?>">
+                        <?= htmlspecialchars($_SESSION['message']) ?>
+                    </div>
+                    <?php unset($_SESSION['message'], $_SESSION['message_type']); ?>
+                <?php endif; ?>
+
+                <?php
+                // Logic to display user information: prioritize current login, then last logout
+                $displayUser = null;
+                $displayLoginTime = null;
+                $displayLogoutTime = null;
+
+                if ($loggedIn && $currentUser) {
+                    // If currently logged in, display current user info
+                    $displayUser = $currentUser;
+                    $displayLoginTime = $currentUser['login_time'];
+                    // Reset last_logged_out_user_info if a new user logs in
+                    unset($_SESSION['last_logged_out_user_info']);
+                } elseif ($loggedOutRecently && $lastLoggedOutUser) {
+                    // If no one is currently logged in, but someone just logged out, display their info
+                    $displayUser = $lastLoggedOutUser;
+                    // Assuming login_time might still be part of lastLoggedOutUser if captured from logged_users
+                    $displayLoginTime = $lastLoggedOutUser['login_time'] ?? 'N/A';
+                    $displayLogoutTime = $lastLoggedOutUser['logout_time'];
+                }
+
+                if ($displayUser):
+                ?>
+                    <div class="user-info">
+                        <p><strong>Name:</strong> <?= htmlspecialchars($displayUser['name'] ?? 'N/A') ?></p>
+                        <p><strong>Age:</strong> <?= htmlspecialchars($displayUser['age'] ?? 'N/A') ?></p>
+                        <p><strong>Gender:</strong> <?= htmlspecialchars($displayUser['gender'] ?? 'N/A') ?></p>
+                        <p><strong>Role:</strong> <?= htmlspecialchars($displayUser['type'] ?? 'N/A') ?></p>
+
+                        <?php if (isset($displayUser['type']) && $displayUser['type'] == 'Student'): ?>
+                            <p><strong>Course:</strong> <?= htmlspecialchars($displayUser['course'] ?? 'N/A') ?></p>
+                            <p><strong>Section:</strong> <?= htmlspecialchars($displayUser['section'] ?? 'N/A') ?></p>
+                        <?php endif; ?>
+
+                        <?php if ($displayLoginTime): ?>
+                            <p><strong>Login Time:</strong> <?= htmlspecialchars($displayLoginTime) ?></p>
+                        <?php endif; ?>
+
+                        <?php if ($displayLogoutTime): ?>
+                            <p><strong>Logout Time:</strong> <?= htmlspecialchars($displayLogoutTime) ?></p>
+                        <?php endif; ?>
+                    </div>
+                <?php else: ?>
+                    <p>Please login to view your information.</p>
+                <?php endif; ?>
+            </div>
+        </div>
+
+        <div class="container">
+            <div class="announcement-box">
+                <h3>Latest Announcements</h3>
+                <?php if (!empty($announcements)): ?>
+                    <?php foreach ($announcements as $announcement): ?>
+                        <div class="announcement-item">
+                            <div class="announcement-title"><?= htmlspecialchars($announcement['title']) ?></div>
+                            <div class="announcement-date"><?= date("M j, Y g:i A", strtotime($announcement['created_at'])) ?></div>
+                            <div class="announcement-message"><?= nl2br(htmlspecialchars($announcement['message'])) ?></div>
+                        </div>
+                    <?php endforeach; ?>
+                <?php else: ?>
+                    <p>No announcements posted yet.</p>
+                <?php endif; ?>
+            </div>
         </div>
     </div>
-</div>
 </body>
+
 </html>

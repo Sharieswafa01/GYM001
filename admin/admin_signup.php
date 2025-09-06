@@ -4,7 +4,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $password = password_hash($_POST['password'], PASSWORD_DEFAULT); // Secure hash
 
     // Connect to the database
-    $conn = new mysqli('localhost', 'root', '', 'gym_management');
+    $conn = new mysqli('127.0.0.1', 'root', '', 'gym_management');
     if ($conn->connect_error) {
         die("Connection failed: " . $conn->connect_error);
     }
@@ -34,10 +34,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 <!DOCTYPE html>
 <html>
+
 <head>
     <title>Admin Sign Up</title>
     <link rel="stylesheet" href="css/admin_login.css">
 </head>
+
 <body>
     <div class="container">
         <h2>Admin Sign Up</h2>
@@ -54,8 +56,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             <input type="submit" value="Sign Up">
         </form>
 
-        <p>    <a href="admin_login.php">  </a></p>
+        <p> <a href="admin_login.php"> </a></p>
     </div>
 </body>
+
 </html>
-            

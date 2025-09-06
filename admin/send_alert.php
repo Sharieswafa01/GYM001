@@ -7,7 +7,7 @@ use PHPMailer\PHPMailer\Exception;
 use Twilio\Rest\Client;
 
 // ---------------- Database connection ----------------
-$host = 'localhost';
+$host = '127.0.0.1';
 $db   = 'gym_management';
 $user = 'root';
 $pass = '';
@@ -102,4 +102,3 @@ foreach ($members as $member) {
         echo "❌ SMS error for $phone: " . $e->getMessage() . "<br>";
     }
 }
-?>
