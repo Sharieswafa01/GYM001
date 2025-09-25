@@ -42,10 +42,10 @@ if (!isset($_SESSION['admin_id'])) {
 }
 
 // Regenerate session id periodically to mitigate fixation
-if (!isset($_SESSION['regenerated_time']) || time() - $_SESSION['regenerated_time'] > 300) { // every 5 minutes
-    session_regenerate_id(true);
-    $_SESSION['regenerated_time'] = time();
-}
+// if (!isset($_SESSION['regenerated_time']) || time() - $_SESSION['regenerated_time'] > 300) { // every 5 minutes
+//     session_regenerate_id(true);
+//     $_SESSION['regenerated_time'] = time();
+// }
 
 // Auto-logout after inactivity (900s = 15 minutes)
 if (isset($_SESSION['last_activity']) && (time() - $_SESSION['last_activity']) > 900) {
