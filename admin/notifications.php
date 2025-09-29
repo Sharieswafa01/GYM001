@@ -37,109 +37,110 @@ $expiringMemberships = $expiringResult ? $expiringResult->fetch_all(MYSQLI_ASSOC
     <title>🔔 Admin Notifications</title>
     <link rel="stylesheet" href="css/all.min.css">
     <style>
+    body {
+        font-family: 'Segoe UI', sans-serif;
+        background: #0d1b2a; /* dark background */
+        margin: 0;
+        padding: 50px;
+        color: #ffffff;
+    }
+
+    .top-nav {
+        margin-bottom: 20px;
+    }
+
+    .back-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 42px;
+        height: 42px;
+        border: none;
+        border-radius: 8px;
+        background-color: #3b82f6; /* blue button */
+        color: white;
+        font-size: 18px;
+        text-decoration: none;
+        transition: background 0.3s;
+    }
+
+    .back-btn:hover {
+        background-color: #2563eb; /* darker blue */
+    }
+
+    h1 {
+        font-size: 2rem;
+        color: #3b82f6; /* accent blue */
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-top: 20px;
+    }
+
+    .notif-box {
+        background: #1b263b; /* dark card */
+        border-radius: 12px;
+        padding: 25px 30px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        margin-top: 20px;
+    }
+
+    .notif {
+        display: flex;
+        align-items: flex-start;
+        padding: 20px;
+        margin-bottom: 16px;
+        border-left: 4px solid #3b82f6; /* blue highlight */
+        background: #0d1b2a; /* dark background */
+        border-radius: 10px;
+        transition: background 0.3s;
+    }
+
+    .notif:hover {
+        background: #243a63; /* darker blue hover */
+    }
+
+    .notif i {
+        font-size: 20px;
+        margin-right: 15px;
+        color: #3b82f6; /* accent blue */
+        margin-top: 3px;
+    }
+
+    .notif-content {
+        flex-grow: 1;
+    }
+
+    .notif-content strong {
+        font-weight: bold;
+        color: #ffffff;
+    }
+
+    .notif .date {
+        font-size: 13px;
+        color: #94a3b8; /* muted text */
+        margin-top: 5px;
+        display: block;
+    }
+
+    .no-record {
+        padding: 15px;
+        text-align: center;
+        color: #94a3b8;
+        font-style: italic;
+    }
+
+    @media (max-width: 768px) {
         body {
-            font-family: 'Segoe UI', sans-serif;
-            background: linear-gradient(to right, #e0f7fa, #e8f5e9);
-            margin: 0;
-            padding: 50px;
-            color: #333;
+            padding: 30px 15px;
         }
-
-        .top-nav {
-            margin-bottom: 20px;
-        }
-
-        .back-btn {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            width: 42px;
-            height: 42px;
-            border: none;
-            border-radius: 8px;
-            background-color: #4CAF50;
-            color: white;
-            font-size: 18px;
-            text-decoration: none;
-            transition: background 0.3s;
-        }
-
-        .back-btn:hover {
-            background-color: #388e3c;
-        }
-
-        h1 {
-            font-size: 2rem;
-            color: #333;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin-top: 20px;
-        }
-
-        .notif-box {
-            background: #fff;
-            border-radius: 12px;
-            padding: 25px 30px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
-            margin-top: 20px;
-        }
-
         .notif {
-            display: flex;
-            align-items: flex-start;
-            padding: 20px;
-            margin-bottom: 16px;
-            border-left: 4px solid #4CAF50;
-            background: #fdfdfd;
-            border-radius: 10px;
-            transition: background 0.3s;
+            flex-direction: column;
+            gap: 10px;
         }
+    }
+</style>
 
-        .notif:hover {
-            background: #f1f8f4;
-        }
-
-        .notif i {
-            font-size: 20px;
-            margin-right: 15px;
-            color: #4CAF50;
-            margin-top: 3px;
-        }
-
-        .notif-content {
-            flex-grow: 1;
-        }
-
-        .notif-content strong {
-            font-weight: bold;
-            color: #222;
-        }
-
-        .notif .date {
-            font-size: 13px;
-            color: #666;
-            margin-top: 5px;
-            display: block;
-        }
-
-        .no-record {
-            padding: 15px;
-            text-align: center;
-            color: #777;
-            font-style: italic;
-        }
-
-        @media (max-width: 768px) {
-            body {
-                padding: 30px 15px;
-            }
-            .notif {
-                flex-direction: column;
-                gap: 10px;
-            }
-        }
-    </style>
 </head>
 <body>
 

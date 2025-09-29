@@ -23,186 +23,200 @@ if (!$result) {
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>All Students</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
 
-        body {
-            font-family: 'Arial', sans-serif;
-            background-color: #f4f7f6;
-            color: #333;
-            line-height: 1.6;
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
+    body {
+        font-family: 'Segoe UI', Arial, sans-serif;
+        background-color: #0d1b2a; /* Dark navy background */
+        color: #e0e6ed; /* Light text */
+        line-height: 1.6;
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
 
-        a.back-link {
-            align-self: flex-start;
-            margin-bottom: 20px;
-            color: white;
-            background-color: #28a745;
-            text-decoration: none;
-            font-weight: 600;
-            padding: 6px 12px;
-            border-radius: 5px;
-            border: none;
-            font-size: 0.85rem;
-        }
+    a.back-link {
+        align-self: flex-start;
+        margin-bottom: 20px;
+        color: #e0e6ed;
+        background-color: rgba(255, 255, 255, 0.08);
+        text-decoration: none;
+        font-weight: 600;
+        padding: 6px 12px;
+        border-radius: 5px;
+        font-size: 0.85rem;
+        transition: all 0.3s ease;
+    }
+    a.back-link:hover {
+        background-color: #1b263b;
+        color: #00b4d8; /* Cyan accent */
+    }
 
+    .container {
+        background-color: #1b263b; /* Dark panel */
+        width: 100%;
+        max-width: 1300px;
+        padding: 25px 30px 30px 30px;
+        border-radius: 10px;
+        box-shadow: 0 6px 15px rgba(0,0,0,0.5);
+    }
+
+    .header-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 25px;
+    }
+
+    .header-row h3 {
+        font-weight: 700;
+        font-size: 1.8rem;
+        color: #90e0ef; /* Light cyan heading */
+        user-select: none;
+    }
+
+    .search-form {
+        display: flex;
+        align-items: center;
+    }
+
+    .search-form input[type="text"] {
+        padding: 8px;
+        width: 240px;
+        border-radius: 6px;
+        border: 1px solid #2c2f38;
+        background-color: #14213d;
+        color: #e0e6ed;
+    }
+
+    .search-form button {
+        padding: 8px 12px;
+        border: none;
+        border-radius: 6px;
+        background-color: #0077b6; /* Blue button */
+        color: white;
+        cursor: pointer;
+        margin-left: 8px;
+        transition: background 0.3s ease;
+    }
+    .search-form button:hover {
+        background-color: #00b4d8; /* Cyan hover */
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+    }
+
+    table th, table td {
+        padding: 12px 15px;
+        text-align: left;
+        border-bottom: 1px solid #2c2f38;
+        font-size: 1rem;
+        vertical-align: middle;
+    }
+
+    table th {
+        background-color: #0077b6; /* Blue header */
+        color: #fff;
+        font-weight: 700;
+        text-transform: uppercase;
+        user-select: none;
+    }
+
+    table tr:nth-child(even) {
+        background-color: #1f2d3d;
+    }
+
+    table tr:nth-child(odd) {
+        background-color: #22313f;
+    }
+
+    .btn {
+        text-decoration: none;
+        padding: 10px 16px;
+        border-radius: 6px;
+        font-weight: 600;
+        font-size: 0.9rem;
+        user-select: none;
+        border: none;
+        color: white;
+        display: inline-block;
+        transition: background 0.3s ease;
+    }
+
+    .btn-update {
+        background-color: #0077b6; /* Blue button */
+    }
+    .btn-update:hover {
+        background-color: #00b4d8; /* Cyan hover */
+    }
+
+    .btn-delete {
+        background-color: #dc3545; /* Red */
+    }
+    .btn-delete:hover {
+        background-color: #ff6b6b; /* Lighter red hover */
+    }
+
+    .actions {
+        display: flex;
+        gap: 8px;
+    }
+
+    @media (max-width: 768px) {
         .container {
-            background-color: white;
-            width: 100%;
-            max-width: 1300px;
-            padding: 25px 30px 30px 30px;
-            border-radius: 10px;
-            box-shadow: 0 6px 15px rgba(0,0,0,0.15);
+            padding: 20px 15px 20px 15px;
         }
 
         .header-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 25px;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 10px;
         }
 
         .header-row h3 {
-            font-weight: 700;
-            font-size: 1.8rem;
-            color: #333;
-            user-select: none;
+            font-size: 1.4rem;
         }
 
         .search-form {
-            display: flex;
-            align-items: center;
+            width: 100%;
         }
 
         .search-form input[type="text"] {
-            padding: 8px;
-            width: 240px;
-            border-radius: 6px;
-            border: 1px solid #ccc;
-        }
-
-        .search-form button {
-            padding: 8px 12px;
-            border: none;
-            border-radius: 6px;
-            background-color: #007bff;
-            color: white;
-            cursor: pointer;
-            margin-left: 8px;
-        }
-
-        table {
             width: 100%;
-            border-collapse: collapse;
-            border-radius: 8px;
-            overflow: hidden;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        a.back-link {
+            font-size: 0.9rem;
+            padding: 6px 12px;
         }
 
         table th, table td {
-            padding: 12px 15px;
-            text-align: left;
-            border-bottom: 1px solid #ddd;
-            font-size: 1rem;
-            vertical-align: middle;
-        }
-
-        table th {
-            background-color: rgb(238, 236, 236);
-            color: black;
-            font-weight: 700;
-            text-transform: uppercase;
-            user-select: none;
-        }
-
-        table tr:nth-child(even) {
-            background-color: #f9f9f9;
+            font-size: 0.85rem;
+            padding: 10px 8px;
         }
 
         .btn {
-            text-decoration: none;
-            padding: 10px 16px;
-            border-radius: 6px;
-            font-weight: 600;
-            font-size: 0.9rem;
-            user-select: none;
-            border: none;
-            color: white;
-            display: inline-block;
-        }
-
-        .btn-update {
-            background-color: #28a745;
-        }
-
-        .btn-update:hover {
-            background-color: #218838;
-        }
-
-        .btn-delete {
-            background-color: #dc3545;
-        }
-
-        .btn-delete:hover {
-            background-color: #c82333;
+            font-size: 0.8rem;
+            padding: 8px 12px;
         }
 
         .actions {
-            display: flex;
-            gap: 8px;
+            flex-direction: column;
+            gap: 6px;
         }
+    }
+</style>
 
-        @media (max-width: 768px) {
-            .container {
-                padding: 20px 15px 20px 15px;
-            }
-
-            .header-row {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 10px;
-            }
-
-            .header-row h3 {
-                font-size: 1.4rem;
-            }
-
-            .search-form {
-                width: 100%;
-            }
-
-            .search-form input[type="text"] {
-                width: 100%;
-            }
-
-            a.back-link {
-                font-size: 0.9rem;
-                padding: 6px 12px;
-            }
-
-            table th, table td {
-                font-size: 0.85rem;
-                padding: 10px 8px;
-            }
-
-            .btn {
-                font-size: 0.8rem;
-                padding: 8px 12px;
-            }
-
-            .actions {
-                flex-direction: column;
-                gap: 6px;
-            }
-        }
-    </style>
 </head>
 <body>
     <a href="manage_users.php" class="back-link"> ← </a>

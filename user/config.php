@@ -1,13 +1,17 @@
 <?php
-$servername = "127.0.0.1"; // Your database host, usually '127.0.0.1'
-$username = "root"; // Your database username (default is 'root' on local server)
-$password = ""; // Your database password (empty for local by default)
-$dbname = "gym_management"; // Name of the new database
+// ==============================
+// DATABASE CONFIGURATION
+// ==============================
 
-// Create connection
-$conn = new mysqli($servername, $username, $password, $dbname);
+$host = "127.0.0.1"; // or "localhost"
+$dbname = "gym_management";
+$username = "root";
+$password = ""; // Default in XAMPP is empty
 
-// Check connection
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
+// Create PDO connection
+try {
+    $conn = new PDO("mysql:host=$host;dbname=$dbname;charset=utf8mb4", $username, $password);
+    $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+} catch (PDOException $e) {
+    die("Database Connection failed: " . $e->getMessage());
 }

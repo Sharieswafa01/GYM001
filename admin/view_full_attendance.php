@@ -46,80 +46,106 @@ $total = $result->num_rows;
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f0f2f5;
-            margin: 0;
+    body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background-color: #0d1b2a; /* dark navy */
+        margin: 0;
+        padding: 20px;
+        color: #f1f5f9;
+    }
+
+    /* Back Button Styling */
+    .back-arrow {
+        position: absolute;
+        top: 20px;
+        left: 30px;
+        font-size: 16px;
+        text-decoration: none;
+        background-color: #1b263b;
+        color: #f1f5f9;
+        padding: 8px 14px;
+        border-radius: 6px;
+        font-weight: bold;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+        transition: all 0.3s ease;
+        z-index: 1000;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .back-arrow:hover {
+        background-color: #2d3748;
+        color: #3b82f6; /* blue highlight */
+    }
+
+    .container {
+        background: #1e293b; /* dark slate */
+        padding: 30px;
+        border-radius: 12px;
+        box-shadow: 0 0 20px rgba(0,0,0,0.4);
+        max-width: 1100px;
+        margin: auto;
+    }
+
+    h2 {
+        text-align: center;
+        color: #f1f5f9;
+        margin-bottom: 20px;
+        border-bottom: 2px solid #334155;
+        padding-bottom: 10px;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        background-color: #1b263b;
+        color: #f1f5f9;
+        border-radius: 8px;
+        overflow: hidden;
+    }
+
+    table th, table td {
+        padding: 12px;
+        text-align: center;
+        border-bottom: 1px solid #475569;
+    }
+
+    thead {
+        background-color: #334155;
+    }
+
+    tbody tr:hover {
+        background-color: #2d3748; /* row hover effect */
+    }
+
+    .status-login {
+        color: #22c55e; /* green */
+        font-weight: bold;
+    }
+
+    .status-logout {
+        color: #ef4444; /* red */
+        font-weight: bold;
+    }
+
+    @media (max-width: 768px) {
+        .container {
             padding: 20px;
         }
 
-        /* Back Button Styling */
-        .back-arrow {
-            position: absolute;
-            top: 20px;
-            left: 30px;
-            font-size: 16px;
-            text-decoration: none;
-            background-color: rgba(255, 255, 255, 0.9);
-            color: #000;
-            padding: 8px 14px;
-            border-radius: 6px;
-            font-weight: bold;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-            transition: all 0.3s ease;
-            z-index: 1000;
-        }
-        .back-arrow:hover {
-            background-color: #00ff99;
-            color: #000;
-        }
-
-        .container {
-            background: #fff;
-            padding: 30px;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
-            max-width: 1100px;
-            margin: auto;
-        }
-
-        h2 {
-            text-align: center;
-            color: #333;
-            margin-bottom: 20px;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            background-color: #f9f9f9;
-        }
-
         table th, table td {
-            padding: 12px;
-            text-align: center;
-            border-bottom: 1px solid #ccc;
+            font-size: 14px;
+            padding: 10px;
         }
+    }
+</style>
 
-        thead {
-            background-color: #ddd;
-        }
-
-        .status-login {
-            color: #4CAF50;
-            font-weight: bold;
-        }
-
-        .status-logout {
-            color: #F44336;
-            font-weight: bold;
-        }
-    </style>
 </head>
 <body>
 
     <!-- Back Button -->
-    <a href="attendance_tracking.php" class="back-arrow"><i class="fas fa-arrow-left"></i></a>
+    <a href="manage_users.php" class="back-arrow">&#8592;</a>
 
     <div class="container">
         <h2>Full Attendance List (<?= htmlspecialchars($today) ?>)</h2>

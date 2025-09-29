@@ -22,173 +22,194 @@ if (!$result) {
     <meta charset="UTF-8" />
     <title>All Customers</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+   <style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
 
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f4f7f6;
-            padding: 20px;
-            color: #333;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
+    body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background-color: #0d1b2a; /* Dark navy */
+        padding: 20px;
+        color: #e0e6ed;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
 
-        a.back-link {
-            align-self: flex-start;
-            margin-bottom: 20px;
-            text-decoration: none;
-            font-weight: 600;
+    a.back-link {
+        align-self: flex-start;
+        margin-bottom: 20px;
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 0.85rem;
+        padding: 6px 12px;
+        border-radius: 5px;
+        background-color: #0077b6; /* Blue button */
+        color: white;
+        transition: background 0.3s ease;
+    }
+
+    a.back-link:hover {
+        background-color: #00b4d8; /* Cyan hover */
+    }
+
+    .container {
+        background: #1b263b; /* Dark panel */
+        padding: 20px;
+        border-radius: 8px;
+        margin: 20px auto;
+        max-width: 95%;
+        min-height: 80vh;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+        overflow-x: auto;
+    }
+
+    .header-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+    }
+
+    .header-row h3 {
+        font-size: 1.8rem;
+        color: #90e0ef; /* Cyan heading */
+    }
+
+    .search-form {
+        display: flex;
+        align-items: center;
+    }
+
+    .search-form input[type="text"] {
+        padding: 8px;
+        width: 240px;
+        border-radius: 6px;
+        border: 1px solid #2c2f38;
+        background: #14213d;
+        color: #e0e6ed;
+    }
+
+    .search-form input[type="text"]:focus {
+        outline: none;
+        border-color: #00b4d8;
+        box-shadow: 0 0 5px #00b4d8;
+    }
+
+    .search-form button {
+        padding: 8px 12px;
+        border: none;
+        border-radius: 6px;
+        background-color: #0077b6;
+        color: white;
+        cursor: pointer;
+        margin-left: 8px;
+        transition: background 0.3s ease;
+    }
+
+    .search-form button:hover {
+        background-color: #00b4d8;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+    }
+
+    table th, table td {
+        padding: 12px 14px;
+        text-align: left;
+        border-bottom: 1px solid #2c2f38;
+        font-size: 1rem;
+    }
+
+    table th {
+        background-color: #14213d;
+        font-weight: bold;
+        text-transform: uppercase;
+        color: #90e0ef;
+    }
+
+    table tr:nth-child(even) {
+        background-color: #1e2a47;
+    }
+
+    .btn {
+        text-decoration: none;
+        padding: 10px 16px;
+        border-radius: 6px;
+        font-weight: 600;
+        font-size: 0.9rem;
+        color: white;
+        border: none;
+        display: inline-block;
+        transition: background-color 0.3s ease, color 0.3s ease;
+    }
+
+    .btn-update {
+        background-color: #0077b6;
+    }
+
+    .btn-update:hover {
+        background-color: #00b4d8;
+    }
+
+    .btn-delete {
+        background-color: #dc3545;
+    }
+
+    .btn-delete:hover {
+        background-color: #ff6b6b;
+    }
+
+    .actions {
+        display: flex;
+        justify-content: flex-start;
+        align-items: center;
+        gap: 10px;
+    }
+
+    @media (max-width: 768px) {
+        table th, table td {
             font-size: 0.85rem;
-            padding: 6px 12px;
-            border-radius: 5px;
-            background-color: #28a745;
-            color: white;
-            border: none;
         }
 
-        .container {
-    background: #fff;
-    padding: 20px;
-    border-radius: 8px;
-    margin: 20px auto;
-    max-width: 95%; /* Make it wider */
-    min-height: 80vh; /* Make it taller so table + pagination fit */
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-    overflow-x: auto; /* Prevent content from spilling horizontally */
-}
-
+        .container h3 {
+            font-size: 1.4rem;
+        }
 
         .header-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-
-        .header-row h3 {
-            font-size: 1.8rem;
-        }
-
-        .search-form {
-            display: flex;
-            align-items: center;
-        }
-
-        .search-form input[type="text"] {
-            padding: 8px;
-            width: 240px;
-            border-radius: 6px;
-            border: 1px solid #ccc;
-        }
-
-        .search-form button {
-            padding: 8px 12px;
-            border: none;
-            border-radius: 6px;
-            background-color: #007bff;
-            color: white;
-            cursor: pointer;
-            margin-left: 8px;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-            border-radius: 8px;
-            overflow: hidden;
-        }
-
-        table th, table td {
-            padding: 12px 14px;
-            text-align: left;
-            border-bottom: 1px solid #ddd;
-            font-size: 1rem;
-        }
-
-        table th {
-            background-color: #e9e9e9;
-            font-weight: bold;
-            text-transform: uppercase;
-        }
-
-        table tr:nth-child(even) {
-            background-color: #f9f9f9;
-        }
-
-        .btn {
-            text-decoration: none;
-            padding: 10px 16px;
-            border-radius: 6px;
-            font-weight: 600;
-            font-size: 0.9rem;
-            color: white;
-            border: none;
-            display: inline-block;
-            transition: background-color 0.3s ease, color 0.3s ease;
-        }
-
-        .btn-update {
-            background-color: #28a745;
-        }
-
-        .btn-delete {
-            background-color: #dc3545;
-        }
-
-        .btn-update:hover,
-        .btn-delete:hover {
-            background-color: #00ff99;
-            color: #000;
-        }
-
-        .actions {
-            display: flex;
-            justify-content: flex-start;
-            align-items: center;
+            flex-direction: column;
+            align-items: flex-start;
             gap: 10px;
         }
 
-        @media (max-width: 768px) {
-            table th, table td {
-                font-size: 0.85rem;
-            }
-
-            .container h3 {
-                font-size: 1.4rem;
-            }
-
-            .header-row {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 10px;
-            }
-
-            .search-form {
-                width: 100%;
-            }
-
-            .search-form input[type="text"] {
-                width: 100%;
-            }
-
-            .actions {
-                flex-direction: column;
-                gap: 6px;
-            }
-
-            .btn {
-                width: 100%;
-                text-align: center;
-            }
+        .search-form {
+            width: 100%;
         }
-    </style>
+
+        .search-form input[type="text"] {
+            width: 100%;
+        }
+
+        .actions {
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .btn {
+            width: 100%;
+            text-align: center;
+        }
+    }
+</style>
+
 </head>
 <body>
     <a href="manage_users.php" class="back-link"> ← </a>

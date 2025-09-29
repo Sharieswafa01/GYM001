@@ -13,6 +13,7 @@ class ComposerStaticInit2185d2f99bcd56787481d9357a5972d3
         ),
         'P' => 
         array (
+            'Picqer\\Barcode\\' => 15,
             'PHPMailer\\PHPMailer\\' => 20,
         ),
     );
@@ -21,6 +22,10 @@ class ComposerStaticInit2185d2f99bcd56787481d9357a5972d3
         'Twilio\\' => 
         array (
             0 => __DIR__ . '/..' . '/twilio/sdk/src/Twilio',
+        ),
+        'Picqer\\Barcode\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/picqer/php-barcode-generator/src',
         ),
         'PHPMailer\\PHPMailer\\' => 
         array (

@@ -58,23 +58,24 @@ $totalRecords = $countResult->fetch_assoc()['total'];
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
     <style>
-        * { box-sizing: border-box; }
-        body, html {
-            margin: 0;
-            padding: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f0f2f5;
-        }
+    * { box-sizing: border-box; }
+    body, html {
+        margin: 0;
+        padding: 0;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background-color: #0d1b2a; /* deep navy */
+        color: #f1f5f9;
+    }
 
-        .dashboard-wrapper {
-            display: flex;
-            height: 100vh;
-        }
+    .dashboard-wrapper {
+        display: flex;
+        height: 100vh;
+    }
 
-         .sidebar {
+    /* Sidebar */
+    .sidebar {
         width: 290px;
-        background: #111; /* your original background color */
-        backdrop-filter: blur(6px);
+        background: #1b263b; /* dark slate navy */
         color: #fff;
         padding: 20px 20px 40px;
         position: fixed;
@@ -85,7 +86,7 @@ $totalRecords = $countResult->fetch_assoc()['total'];
     .sidebar .logo {
         text-align: center;
         padding: 30px 0 20px;
-        border-bottom: 1px solid #444;
+        border-bottom: 1px solid #334155;
         margin-bottom: 30px;
     }
 
@@ -93,13 +94,13 @@ $totalRecords = $countResult->fetch_assoc()['total'];
         margin: 0;
         font-size: 28px;
         font-weight: 600;
-        letter-spacing: 1.5px;
-        color: #fff;
+        color: #3b82f6; /* bright blue highlight */
     }
 
     .sidebar .nav ul {
         list-style: none;
         padding: 0;
+        margin: 0;
     }
 
     .sidebar .nav ul li {
@@ -109,23 +110,23 @@ $totalRecords = $countResult->fetch_assoc()['total'];
     .sidebar .nav ul li a {
         font-size: 18px;
         font-weight: 500;
-        color: #fff;
+        color: #f1f5f9;
         text-decoration: none;
         display: flex;
         align-items: center;
         gap: 10px;
         padding: 10px 15px;
-        border-radius: 6px;
+        border-radius: 8px;
         transition: background 0.3s, color 0.3s;
     }
 
     .sidebar .nav ul li a:hover {
-        background-color: #333;
-        color: #4caf50;
+        background-color: #2d3748;
+        color: #3b82f6; /* blue highlight */
     }
 
     .sidebar-logout a {
-        color: #fff;
+        color: #f1f5f9;
         text-decoration: none;
         display: flex;
         align-items: center;
@@ -134,115 +135,122 @@ $totalRecords = $countResult->fetch_assoc()['total'];
         font-weight: bold;
         font-size: 18px;
         padding: 10px 15px;
-        border-radius: 6px;
+        border-radius: 8px;
         transition: background 0.3s, color 0.3s;
     }
 
     .sidebar-logout a:hover {
-        background-color: #333;
-        color: #f44336;
+        background-color: #2d3748;
+        color: #ef4444; /* red highlight */
     }
 
-        .main-content {
-            margin-left: 290px;
-            padding: 40px;
-            flex: 1;
-            overflow-y: auto;
+    /* Main content */
+    .main-content {
+        margin-left: 290px;
+        padding: 40px;
+        flex: 1;
+        overflow-y: auto;
+    }
+
+    .attendance-tracking {
+        background: #1e293b;
+        padding: 25px;
+        border-radius: 12px;
+        box-shadow: 0 0 15px rgba(0,0,0,0.4);
+        position: relative;
+    }
+
+    .attendance-tracking h2 {
+        font-size: 1.6rem;
+        margin-bottom: 20px;
+        color: #f1f5f9;
+        border-bottom: 2px solid #334155;
+        padding-bottom: 10px;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        background-color: #1b263b;
+        margin-bottom: 10px;
+        color: #f1f5f9;
+    }
+
+    thead {
+        background-color: #334155;
+    }
+
+    table th, table td {
+        padding: 14px;
+        text-align: left;
+        border-bottom: 1px solid #475569;
+    }
+
+    .status-login {
+        color: #22c55e; /* green for login */
+        font-weight: bold;
+    }
+
+    .status-logout {
+        color: #ef4444; /* red for logout */
+        font-weight: bold;
+    }
+    
+
+    .link-right {
+        text-align: right;
+        margin-top: 10px;
+    }
+
+    .link-right a {
+        font-weight: bold;
+        text-decoration: none;
+        color: #3b82f6; /* blue highlight */
+    }
+
+    .link-right a:hover {
+        text-decoration: underline;
+    }
+
+    .folder-section {
+        margin-top: 40px;
+        padding: 20px;
+        background: #1e293b;
+        border-radius: 10px;
+        box-shadow: 0 0 10px rgba(0,0,0,0.3);
+    }
+
+    .folder-section h3 a {
+        text-decoration: none;
+        color: #f1f5f9;
+        font-weight: bold;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .folder-section h3 a:hover {
+        color: #3b82f6; /* blue highlight */
+    }
+
+    @media (max-width: 768px) {
+        .dashboard-wrapper {
+            flex-direction: column;
         }
 
-        .attendance-tracking {
-            background: #fff;
-            padding: 25px;
-            border-radius: 12px;
-            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+        .sidebar {
+            width: 100%;
+            height: auto;
             position: relative;
         }
 
-        .attendance-tracking h2 {
-            font-size: 1.6rem;
-            margin-bottom: 20px;
-            color: #222;
-            border-bottom: 2px solid #555;
-            padding-bottom: 10px;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            background-color: #f9f9f9;
-            margin-bottom: 10px;
-        }
-
-        thead {
-            background-color: #ddd;
-        }
-
-        table th, table td {
-            padding: 14px;
-            text-align: left;
-            border-bottom: 1px solid #ccc;
-        }
-
-        .status-login {
-            color: #4CAF50;
-            font-weight: bold;
-        }
-
-        .status-logout {
-            color: #F44336;
-            font-weight: bold;
-        }
-
-        .link-right {
-            text-align: right;
-            margin-top: 10px;
-        }
-
-        .link-right a {
-            font-weight: bold;
-            text-decoration: none;
-            color: #007bff;
-        }
-
-        .link-right a:hover {
-            text-decoration: underline;
-        }
-
-        .folder-section {
-            margin-top: 40px;
+        .main-content {
+            margin-left: 0;
             padding: 20px;
-            background: #fff;
-            border-radius: 10px;
-            box-shadow: 0 0 8px rgba(0,0,0,0.1);
         }
+    }
+</style>
 
-        .folder-section h3 a {
-            text-decoration: none;
-            color: #111;
-            font-weight: bold;
-        }
-
-        .folder-section h3 a:hover {
-            text-decoration: underline;
-        }
-
-        @media (max-width: 768px) {
-            .dashboard-wrapper {
-                flex-direction: column;
-            }
-
-            .sidebar {
-                width: 100%;
-                height: auto;
-                position: relative;
-            }
-
-            .main-content {
-                margin-left: 0;
-                padding: 20px;
-            }
-        }
-    </style>
 </head>
 <body>
 <div class="dashboard-wrapper">
@@ -250,7 +258,7 @@ $totalRecords = $countResult->fetch_assoc()['total'];
     <!-- Sidebar -->
     <aside class="sidebar">
         <div class="logo">
-            <h2>Gym Admin</h2>
+            <h2>GYM ADMIN</h2>
         </div>
         <nav class="nav">
             <ul>
@@ -260,6 +268,7 @@ $totalRecords = $countResult->fetch_assoc()['total'];
                 <li><a href="manage_equipment.php"><i class="fas fa-dumbbell"></i> Equipment</a></li>
                 <li><a href="announcement.php"><i class="fas fa-bullhorn"></i> Announcements</a></li>
                 <li><a href="manage_membership.php"><i class="fas fa-credit-card"></i> Membership</a></li>
+                <li><a href="waiver.php"><i class="fas fa-file-signature" aria-hidden="true"></i> Waiver</a></li>
             </ul>
         </nav>
         <div class="sidebar-logout">
