@@ -21,68 +21,72 @@ $result = $conn->query($query);
     <title>Yearly Attendance Records</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f0f2f5;
-            margin: 0;
-        }
-        .top-bar {
-            padding: 15px 20px;
-        }
-        .back-btn {
-            background-color: #ffffff;
-            border-radius: 8px;
-            padding: 8px 14px;
-            display: inline-block;
-            text-decoration: none;
-            color: #333;
-            font-size: 18px;
-            font-weight: bold;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.2);
-            transition: background-color 0.2s ease;
-        }
-        .back-btn:hover {
-            background-color:  #00ff99;
-        }
-        .container {
-            display: flex;
-            justify-content: center;
-            padding: 20px;
-        }
-        .card {
-            background-color: #fff6f6;
-            padding: 30px;
-            border-radius: 15px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-            max-width: 800px;
-            width: 100%;
-        }
-        h2 {
-            text-align: center;
-            margin-bottom: 25px;
-            color: #333;
-        }
-        .year-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-            gap: 15px;
-        }
-        .year-item {
-            background-color:rgb(68, 159, 68); 
-            padding: 15px;
-            text-align: center;
-            border-radius: 8px;
-            font-weight: bold;
-            color: #004085;
-            text-decoration: none;
-            display: block;
-            transition: transform 0.2s ease, background-color 0.2s ease;
-        }
-        .year-item:hover {
-            background-color: #66cc66; 
-            transform: scale(1.05);
-        }
-    </style>
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #0d1b2a; /* Dark navy */
+        margin: 0;
+        color: #e0e6ed; /* Light text */
+    }
+    .top-bar {
+        padding: 15px 20px;
+    }
+    .back-btn {
+        background-color: rgba(255, 255, 255, 0.08);
+        border-radius: 8px;
+        padding: 8px 14px;
+        display: inline-block;
+        text-decoration: none;
+        color: #e0e6ed;
+        font-size: 18px;
+        font-weight: bold;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.4);
+        transition: background-color 0.2s ease, color 0.2s ease;
+    }
+    .back-btn:hover {
+        background-color: #1b263b;
+        color: #00b4d8; /* Cyan highlight */
+    }
+    .container {
+        display: flex;
+        justify-content: center;
+        padding: 20px;
+    }
+    .card {
+        background-color: #1b263b; /* Dark container */
+        padding: 30px;
+        border-radius: 15px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.6);
+        max-width: 800px;
+        width: 100%;
+    }
+    h2 {
+        text-align: center;
+        margin-bottom: 25px;
+        color: #90e0ef; /* Light cyan accent */
+    }
+    .year-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+        gap: 15px;
+    }
+    .year-item {
+        background-color: #90e0ef; /* Light blue */
+        padding: 15px;
+        text-align: center;
+        border-radius: 8px;
+        font-weight: bold;
+        color: #0d1b2a; /* Dark navy text */
+        text-decoration: none;
+        display: block;
+        transition: transform 0.2s ease, background-color 0.2s ease;
+    }
+    .year-item:hover {
+        background-color: #0077b6; /* Dark blue hover */
+        color: #ffffff;
+        transform: scale(1.05);
+    }
+</style>
+
 </head>
 <body>
 

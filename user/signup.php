@@ -70,10 +70,13 @@
             <label for="payment_plan">Select Plan:</label>
             <select name="payment_plan" id="payment_plan">
                 <option value="">Select Plan</option>
+                <option value="1 Day">1 Day</option>
                 <option value="1 Week">1 Week</option>
                 <option value="30 Days">30 Days</option>
                 <option value="2 Months">2 Months</option>
                 <option value="3 Months">3 Months</option>
+                <option value="1 year">3 Months</option>
+                
             </select><br><br>
 
             <label for="services">Select Services:</label>

@@ -34,254 +34,297 @@ $result = $conn->query($query);
     <meta charset="UTF-8">
     <title>Manage Memberships</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-    <style>
-        * { box-sizing: border-box; }
-        html, body {
-            margin: 0;
-            padding: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f0f2f5;
-        }
+   <style>
+    :root {
+    --sidebar-dark: #1b263b;
+    --bg-dark: #0d1b2a;
+    --text-light: #ffffff;
+    --accent-blue: #00aaff;      /* Neon blue for buttons */
+    --accent-blue-dark: #1976D2; /* Darker blue for hover */
+    --accent-red: #ff4d4d;       /* Red for delete/logout */
+}
 
-        .dashboard-wrapper {
-            display: flex;
-            height: 100vh;
-            overflow: hidden;
-        }
+* { box-sizing: border-box; }
+html, body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: var(--bg-dark);
+    color: var(--text-light);
+}
 
-        .sidebar {
-            width: 290px;
-            background-color: #111;
-            color: #fff;
-            height: 100vh;
-            padding: 20px;
-            position: fixed;
-            overflow-y: auto;
-        }
+.dashboard-wrapper {
+    display: flex;
+    height: 100vh;
+    overflow: hidden;
+}
 
-        .sidebar .logo {
-            text-align: center;
-            padding: 30px 0 20px;
-            border-bottom: 1px solid #444;
-            margin-bottom: 30px;
-        }
+.sidebar {
+    width: 290px;
+    background-color: var(--sidebar-dark);
+    color: var(--text-light);
+    height: 100vh;
+    padding: 20px;
+    position: fixed;
+    overflow-y: auto;
+    border-right: 1px solid #334155;
+}
 
-        .sidebar .logo h2 {
-            margin: 0;
-            font-size: 28px;
-            font-weight: 600;
-            color: #fff;
-        }
+.sidebar .logo {
+    text-align: center;
+    padding: 30px 0 20px;
+    border-bottom: 1px solid #334155;
+    margin-bottom: 30px;
+}
 
-        .sidebar .nav ul {
-            list-style: none;
-            padding: 0;
-        }
+.sidebar .logo h2 {
+    margin: 0;
+    font-size: 28px;
+    font-weight: 600;
+    color: #3b82f6;
+}
 
-        .sidebar .nav ul li {
-            margin: 18px 0;
-        }
+.sidebar .nav ul {
+    list-style: none;
+    padding: 0;
+}
 
-        .sidebar .nav ul li a {
-            font-size: 18px;
-            font-weight: 500;
-            color: #fff;
-            text-decoration: none;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            padding: 10px 15px;
-            border-radius: 6px;
-            transition: background 0.3s;
-        }
+.sidebar .nav ul li {
+    margin: 18px 0;
+}
 
-        .sidebar .nav ul li a:hover {
-            background-color: #333;
-            color: #4caf50;
-        }
+.sidebar .nav ul li a {
+    font-size: 18px;
+    font-weight: 500;
+    color: var(--text-light);
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 15px;
+    border-radius: 6px;
+    transition: background 0.3s, color 0.3s;
+}
 
-        .sidebar-logout a {
-            color: #fff;
-            text-decoration: none;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin-top: 60px;
-            font-weight: bold;
-            font-size: 18px;
-            padding: 10px 15px;
-            border-radius: 6px;
-            transition: background 0.3s;
-        }
+.sidebar .nav ul li a:hover,
+.sidebar .nav ul li a.active {
+    background-color: #2d3748;
+    color: var(--accent-blue);
+}
 
-        .sidebar-logout a:hover {
-            background-color: #333;
-            color: #f44336;
-        }
+.sidebar-logout a {
+    color: var(--text-light);
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 60px;
+    font-weight: bold;
+    font-size: 18px;
+    padding: 10px 15px;
+    border-radius: 6px;
+    transition: background 0.3s, color 0.3s;
+}
 
-        .main-content {
-            margin-left: 290px;
-            padding: 40px 60px;
-            flex: 1;
-            background-color: #fff;
-            overflow-y: auto;
-        }
+.sidebar-logout a:hover {
+    background-color: #2d3748;
+    color: var(--accent-red);
+}
 
-        h1 {
-            text-align: center;
-            color: #000;
-            margin-bottom: 30px;
-            font-size: 2rem;
-        }
+.main-content {
+    margin-left: 290px;
+    padding: 40px 60px;
+    flex: 1;
+    background-color: var(--bg-dark);
+    color: var(--text-light);
+    overflow-y: auto;
+}
 
-        .container {
-            background-color: #ffffff;
-            color: #000000;
-            padding: 30px;
-            border-radius: 12px;
-            max-width: 1000px;
-            margin: auto;
-            box-shadow: 0 0 15px rgba(0, 0, 0, 0.15);
-        }
+h1 {
+    text-align: center;
+    color: #e0e6ed;
+    margin-bottom: 30px;
+    font-size: 2rem;
+}
 
-        .top-bar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-        }
+.container {
+    background-color: var(--sidebar-dark);
+    color: var(--text-light);
+    padding: 30px;
+    border-radius: 12px;
+    max-width: 1000px;
+    margin: auto;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.25);
+}
 
-        .add-membership-btn {
-            background-color: #28a745;
-            color: white;
-            padding: 12px 18px;
-            text-decoration: none;
-            border-radius: 8px;
-            font-weight: bold;
-        }
+.top-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
 
-        .search-form input[type="text"] {
-            padding: 8px;
-            width: 240px;
-            border-radius: 6px;
-            border: 1px solid #ccc;
-        }
+.add-membership-btn {
+    background-color: var(--accent-blue);
+    color: white;
+    padding: 12px 18px;
+    text-decoration: none;
+    border-radius: 8px;
+    font-weight: bold;
+    transition: background 0.3s;
+}
+.add-membership-btn:hover {
+    background-color: var(--accent-blue-dark);
+}
 
-        .search-form button {
-            padding: 8px 12px;
-            border: none;
-            border-radius: 6px;
-            background-color: #007bff;
-            color: white;
-            cursor: pointer;
-        }
+.search-form input[type="text"] {
+    padding: 8px;
+    width: 240px;
+    border-radius: 6px;
+    border: 1px solid #2e3b55;
+    background: var(--bg-dark);
+    color: var(--text-light);
+}
 
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
+.search-form button {
+    padding: 8px 12px;
+    border: none;
+    border-radius: 6px;
+    background-color: var(--accent-blue);
+    color: white;
+    cursor: pointer;
+}
+.search-form button:hover {
+    background-color: var(--accent-blue-dark);
+}
 
-        th, td {
-            padding: 14px;
-            text-align: left;
-            border-bottom: 1px solid #ccc;
-            color: #000;
-        }
+/* TABLE STYLING */
+/* TABLE STYLING */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 15px;
+}
 
-        th {
-            background-color: #f0f0f0;
-        }
+th, td {
+    padding: 14px;
+    text-align: left;
+    border-bottom: 1px solid #334155;
+    color: var(--text-light) !important;     /* force text to be white */
+    background-color: var(--bg-dark) !important;  /* force dark background */
+}
 
-        tr:hover {
-            background-color: #f9f9f9;
-        }
+th {
+    background-color: #334155 !important;
+    color: #fff; !important;
+}
 
-        .price {
-            font-weight: bold;
-        }
+/* Alternate row colors */
+tr:nth-child(even) td {
+    background-color: #14213d !important;   /* slightly lighter dark */
+}
 
-        .actions {
-            display: flex;
-            flex-direction: column;
-            gap: 5px;
-        }
+tr:nth-child(odd) td {
+    background-color: #1f2d3d !important;
+}
 
-        .actions a,
-        .actions form button {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 6px;
-            padding: 6px 10px;
-            width: 100px; /* Equal width */
-            text-decoration: none;
-            border-radius: 6px;
-            font-weight: bold;
-            font-size: 13px;
-            transition: background 0.3s, color 0.3s;
-            cursor: pointer;
-        }
 
-        .actions a[href*="edit_membership"] {
-            background-color: #28a745;
-            color: white;
-        }
+/* Expiring membership highlight */
+.highlight-row td {
+    background-color: #1e3a5f !important;
+    color: #ffffff !important;
+}
 
-        .actions a.delete {
-            background-color: #f44336;
-            color: white;
-        }
 
-        .actions form button {
-            background-color: #ffc107;
-            border: none;
-            color: #000;
-        }
+.price {
+    font-weight: bold;
+    color: var(--accent-blue);
+}
 
-        .actions a:hover,
-        .actions a.delete:hover,
-        .actions form button:hover {
-            filter: brightness(90%);
-        }
+/* ACTION BUTTONS */
+.actions {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
 
-        @media (max-width: 768px) {
-            .dashboard-wrapper {
-                flex-direction: column;
-            }
+.actions a,
+.actions form button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 6px 10px;
+    width: 100px;
+    text-decoration: none;
+    border-radius: 6px;
+    font-weight: bold;
+    font-size: 13px;
+    transition: background 0.3s, color 0.3s;
+    cursor: pointer;
+    color: white;
+}
 
-            .sidebar {
-                width: 100%;
-                height: auto;
-                position: relative;
-            }
+.actions a[href*="edit_membership"] {
+    background-color: var(--accent-blue);
+}
 
-            .main-content {
-                margin-left: 0;
-                padding: 20px;
-            }
+.actions a.delete {
+    background-color: var(--accent-red);
+}
 
-            .top-bar {
-                flex-direction: column;
-                align-items: flex-start;
-            }
+.actions form button {
+    background-color: var(--accent-blue); /* alert button blue */
+    border: none;
+}
 
-            .search-form {
-                margin-top: 10px;
-                width: 100%;
-            }
+.actions a:hover,
+.actions a.delete:hover,
+.actions form button:hover {
+    filter: brightness(90%);
+}
 
-            .search-form input[type="text"] {
-                width: 100%;
-            }
-        }
-    </style>
+/* RESPONSIVE */
+@media (max-width: 768px) {
+    .dashboard-wrapper {
+        flex-direction: column;
+    }
+
+    .sidebar {
+        width: 100%;
+        height: auto;
+        position: relative;
+    }
+
+    .main-content {
+        margin-left: 0;
+        padding: 20px;
+    }
+
+    .top-bar {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .search-form {
+        margin-top: 10px;
+        width: 100%;
+    }
+
+    .search-form input[type="text"] {
+        width: 100%;
+    }
+}
+
+</style>
+
 </head>
 <body>
 
 <div class="dashboard-wrapper">
     <aside class="sidebar">
         <div class="logo">
-            <h2>Gym Admin</h2>
+            <h2>GYM ADMIN</h2>
         </div>
         <nav class="nav">
             <ul>

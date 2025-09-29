@@ -110,21 +110,85 @@ $month_name = date("F", mktime(0,0,0,$month_number,1));
     <meta charset="UTF-8">
     <title>Attendance for <?= htmlspecialchars(date("F j, Y", strtotime($date_iso))) ?></title>
     <style>
-        body { font-family: 'Segoe UI', Arial, sans-serif; background:#f0f2f5; margin:0; padding:0; }
-        .container { max-width:1100px; margin:40px auto; background:#fff; padding:28px; border-radius:10px; box-shadow:0 8px 16px rgba(0,0,0,0.08); }
-        .back-arrow { position:fixed; top:20px; left:30px; background:rgba(255,255,255,0.95); padding:8px 14px; border-radius:6px; text-decoration:none; color:#000; box-shadow:0 2px 5px rgba(0,0,0,0.12); font-weight:600; }
-        .back-arrow:hover { background:#eaffdf; }
-        h2 { text-align:center; margin:0 0 18px 0; color:#333; }
-        table { width:100%; border-collapse:collapse; margin-top:16px; }
-        thead { background:#000; color:#fff; }
-        th, td { padding:12px 14px; border:1px solid #e6e9ee; text-align:center; }
-        .status-login { color:green; font-weight:700; }
-        .status-logout { color:red; font-weight:700; }
-        .no-records { text-align:center; padding:18px; color:#666; font-style:italic; }
-    </style>
+    body {
+        font-family: 'Segoe UI', Arial, sans-serif;
+        background: #0d1b2a; /* Dark navy */
+        margin: 0;
+        padding: 0;
+        color: #e0e6ed; /* Light text */
+    }
+    .container {
+        max-width: 1100px;
+        margin: 40px auto;
+        background: #1b263b; /* Dark panel */
+        padding: 28px;
+        border-radius: 10px;
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.5);
+    }
+    .back-arrow {
+        position: fixed;
+        top: 20px;
+        left: 30px;
+        background: rgba(255, 255, 255, 0.08);
+        padding: 8px 14px;
+        border-radius: 6px;
+        text-decoration: none;
+        color: #e0e6ed;
+        font-weight: 600;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+        transition: all 0.3s ease;
+    }
+    .back-arrow:hover {
+        background: #1b263b;
+        color: #00b4d8; /* Cyan highlight */
+    }
+    h2 {
+        text-align: center;
+        margin: 0 0 18px 0;
+        color: #90e0ef; /* Light cyan accent */
+    }
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 16px;
+        background: #14213d; /* Darker card look */
+        border-radius: 6px;
+        overflow: hidden;
+    }
+    thead {
+        background: #0077b6; /* Bright blue header */
+        color: #ffffff;
+    }
+    th, td {
+        padding: 12px 14px;
+        border: 1px solid #2c2f38; /* Subtle dark border */
+        text-align: center;
+    }
+    tbody tr:nth-child(even) {
+        background: #1f2d3d; /* Alternating row color */
+    }
+    tbody tr:nth-child(odd) {
+        background: #22313f;
+    }
+    .status-login {
+        color: #4cc9f0; /* Cyan for login */
+        font-weight: 700;
+    }
+    .status-logout {
+        color: #ff6b6b; /* Soft red for logout */
+        font-weight: 700;
+    }
+    .no-records {
+        text-align: center;
+        padding: 18px;
+        color: #8899aa;
+        font-style: italic;
+    }
+</style>
+
 </head>
 <body>
-    <a class="back-arrow" href="<?= htmlspecialchars($back_link) ?>">&larr; Back</a>
+    <a class="back-arrow" href="<?= htmlspecialchars($back_link) ?>">&larr;</a>
     <div class="container">
         <h2>Attendance for <?= htmlspecialchars(date("F j, Y", strtotime($date_iso))) ?></h2>
 

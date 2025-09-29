@@ -52,12 +52,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     body {
       font-family: 'Segoe UI', sans-serif;
-      background: #f5f5f5;
+      background: #0d1b2a; /* dark background */
       margin: 0;
       padding: 0;
       display: flex;
       justify-content: center;
       min-height: 100vh;
+      color: #ffffff; /* default text color */
     }
 
     .back-button {
@@ -72,33 +73,35 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       justify-content: center;
       width: 40px;
       height: 40px;
-      background-color: white;
-      color: #4CAF50;
+      background-color: #1b263b; /* dark button */
+      color: #3b82f6; /* accent blue */
       border-radius: 8px;
       font-size: 18px;
       text-decoration: none;
-      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5);
     }
 
     .container {
-      background: #fff;
+      background: #1b263b; /* dark card */
       margin: 80px auto;
       padding: 30px 30px 50px;
       border-radius: 16px;
       width: 100%;
       max-width: 500px;
-      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.6);
     }
 
     h2 {
       text-align: left;
       margin-bottom: 25px;
+      color: #3b82f6; /* accent blue */
     }
 
     label {
       display: block;
       margin: 15px 0 8px;
       font-weight: 600;
+      color: #3b82f6; /* accent blue */
     }
 
     .input-group {
@@ -110,12 +113,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       padding: 12px 40px 12px 14px;
       font-size: 15px;
       border-radius: 8px;
-      border: 2px solid #ccc;
+      border: 2px solid #334155; /* dark border */
       outline: none;
+      background: #0f172a; /* deep dark input */
+      color: #e2e8f0; /* light text */
     }
 
-    .input-group.success input { border-color: #4CAF50; }
-    .input-group.error input { border-color: #F44336; }
+    .input-group.success input { border-color: #22c55e; } /* green success */
+    .input-group.error input { border-color: #ef4444; }  /* red error */
 
     .input-group i.toggle {
       position: absolute;
@@ -123,7 +128,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       top: 50%;
       transform: translateY(-50%);
       cursor: pointer;
-      color: #555;
+      color: #94a3b8; /* muted gray */
     }
 
     .requirements {
@@ -135,11 +140,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       margin: 4px 0;
       display: flex;
       align-items: center;
-      color: #999;
+      color: #94a3b8; /* muted gray */
     }
 
-    .requirements p.valid { color: green; }
-    .requirements p.invalid { color: red; }
+    .requirements p.valid { color: #22c55e; }  /* green */
+    .requirements p.invalid { color: #ef4444; } /* red */
 
     .requirements p i {
       margin-right: 6px;
@@ -147,7 +152,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     .btn {
       width: 100%;
-      background:  #43a047;
+      background: #3b82f6; /* accent blue */
       color: white;
       padding: 12px;
       font-size: 16px;
@@ -155,10 +160,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       border: none;
       border-radius: 10px;
       cursor: pointer;
+      transition: background 0.3s ease;
     }
 
     .btn:hover {
-      background: #43a047;
+      background: #2563eb; /* darker blue */
     }
 
     .msg, .error {
@@ -169,13 +175,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     .msg {
-      background-color: #c8e6c9;
-      color: #2e7d32;
+      background-color: #1e3a2a; /* dark green bg */
+      color: #22c55e; /* green text */
     }
 
     .error {
-      background-color: #ffcdd2;
-      color: #c62828;
+      background-color: #7f1d1d; /* dark red bg */
+      color: #f87171; /* red text */
     }
 
     .forgot-link {
@@ -185,7 +191,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     .forgot-link a {
       font-size: 13px;
-      color:  #43a047;
+      color: #3b82f6; /* accent blue */
       text-decoration: none;
     }
 
@@ -196,7 +202,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     @media (max-width: 500px) {
       .container { margin: 60px 20px; }
     }
-  </style>
+</style>
+
 </head>
 <body>
 
@@ -244,8 +251,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     <button type="submit" class="btn">Change Password</button>
 
-    <div class="forgot-link">
-  <a href="forgot_password.php">Forgot Password?</a>
+    
 </div>
 
   </form>

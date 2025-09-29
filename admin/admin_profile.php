@@ -24,166 +24,168 @@ $admin = $result->fetch_assoc();
     <title>Admin Profile</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="css/all.min.css">
-    <style>
-        body {
-            margin: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: #f9f9f9;
-            display: flex;
-            justify-content: center;
-            padding: 60px 20px;
-        }
+   <style>
+    body {
+        margin: 0;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background: #0d1b2a; /* dark background */
+        display: flex;
+        justify-content: center;
+        padding: 60px 20px;
+        color: #ffffff; /* default white text */
+    }
 
-        .container {
-            width: 100%;
-            max-width: 900px;
-            display: flex;
-            flex-direction: column;
-            gap: 30px;
-        }
+    .container {
+        width: 100%;
+        max-width: 900px;
+        display: flex;
+        flex-direction: column;
+        gap: 30px;
+    }
 
-        .card {
-            background: white;
-            border-radius: 16px;
-            padding: 25px 30px;
-            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.06);
-        }
+    .card {
+        background: #1b263b; /* dark card */
+        border-radius: 16px;
+        padding: 25px 30px;
+        box-shadow: 0 6px 16px rgba(0, 0, 0, 0.6);
+    }
 
-        .profile-card {
-            display: flex;
-            align-items: center;
-        }
+    .profile-card {
+        display: flex;
+        align-items: center;
+    }
 
-        .profile-top {
-            display: flex;
-            align-items: center;
-            gap: 20px;
-            flex-wrap: wrap;
-        }
+    .profile-top {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        flex-wrap: wrap;
+    }
 
-        .profile-top img {
-            width: 100px;
-            height: 100px;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 3px solid #4CAF50;
-        }
+    .profile-top img {
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 3px solid #3b82f6; /* accent blue */
+    }
 
-        .profile-details h2 {
-            margin: 0;
-            font-size: 22px;
-            color: #2e7d32;
-        }
+    .profile-details h2 {
+        margin: 0;
+        font-size: 22px;
+        color: #3b82f6; /* accent blue */
+    }
 
-        .profile-details p {
-            margin: 5px 0;
-            color: #666;
-            font-weight: 500;
-        }
+    .profile-details p {
+        margin: 5px 0;
+        color: #cbd5e1; /* light gray */
+        font-weight: 500;
+    }
 
-        .profile-details span {
-            font-size: 14px;
-            color: #888;
-        }
+    .profile-details span {
+        font-size: 14px;
+        color: #94a3b8; /* muted gray */
+    }
 
-        .info-card .card-header,
-        .action-card .card-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-        }
+    .info-card .card-header,
+    .action-card .card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+    }
 
-        .card-header h3 {
-            margin: 0;
-            font-size: 18px;
-            color: #1b5e20;
-        }
+    .card-header h3 {
+        margin: 0;
+        font-size: 18px;
+        color: #3b82f6; /* accent blue */
+    }
 
-        .edit-btn {
-            font-size: 14px;
-            color: #4CAF50;
-            text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-            gap: 5px;
-            padding: 6px 12px;
-            border: 1px solid #4CAF50;
-            border-radius: 6px;
-            transition: all 0.3s ease;
-        }
+    .edit-btn {
+        font-size: 14px;
+        color: #3b82f6;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        padding: 6px 12px;
+        border: 1px solid #3b82f6;
+        border-radius: 6px;
+        transition: all 0.3s ease;
+    }
 
-        .edit-btn:hover {
-            background-color: #4CAF50;
-            color: white;
-        }
+    .edit-btn:hover {
+        background-color: #3b82f6;
+        color: white;
+    }
 
+    .info-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 20px;
+    }
+
+    .info-grid label {
+        font-weight: 600;
+        font-size: 14px;
+        color: #3b82f6; /* accent blue */
+    }
+
+    .info-grid p {
+        margin: 4px 0 0;
+        font-size: 15px;
+        color: #e2e8f0; /* soft white */
+    }
+
+    .action-buttons a {
+        display: inline-block;
+        font-size: 14px;
+        color: white;
+        background-color: #3b82f6; /* accent blue */
+        padding: 10px 16px;
+        border-radius: 6px;
+        text-decoration: none;
+        transition: background 0.3s ease;
+    }
+
+    .action-buttons a:hover {
+        background-color: #2563eb; /* darker blue */
+    }
+
+    /* Back button — DO NOT MODIFY */
+    .back-button {
+        position: absolute;
+        top: 20px;
+        left: 20px;
+        z-index: 100;
+    }
+
+    .back-button a {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 40px;
+        height: 40px;
+        background-color: #3b82f6;
+        color: white;
+        border-radius: 8px;
+        font-size: 18px;
+        text-decoration: none;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+        transition: background 0.3s ease;
+    }
+
+    .back-button a:hover {
+        background-color: #2563eb;
+    }
+
+    @media (max-width: 600px) {
         .info-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-            gap: 20px;
+            grid-template-columns: 1fr;
         }
+    }
+</style>
 
-        .info-grid label {
-            font-weight: 600;
-            font-size: 14px;
-            color: #2e7d32;
-        }
-
-        .info-grid p {
-            margin: 4px 0 0;
-            font-size: 15px;
-            color: #333;
-        }
-
-        .action-buttons a {
-            display: inline-block;
-            font-size: 14px;
-            color: white;
-            background-color: #4CAF50;
-            padding: 10px 16px;
-            border-radius: 6px;
-            text-decoration: none;
-            transition: background 0.3s ease;
-        }
-
-        .action-buttons a:hover {
-            background-color: #388e3c;
-        }
-
-        /* Back button — DO NOT MODIFY */
-        .back-button {
-            position: absolute;
-            top: 20px;
-            left: 20px;
-            z-index: 100;
-        }
-
-        .back-button a {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            width: 40px;
-            height: 40px;
-            background-color: #4CAF50;
-            color: white;
-            border-radius: 8px;
-            font-size: 18px;
-            text-decoration: none;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            transition: background 0.3s ease;
-        }
-
-        .back-button a:hover {
-            background-color: #43a047;
-        }
-
-        @media (max-width: 600px) {
-            .info-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-    </style>
 </head>
 <body>
 

@@ -26,9 +26,10 @@ $months = [
     <meta charset="UTF-8">
     <title>Monthly Attendance Records</title>
     <style>
-        body {
+       body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f0f2f5;
+            background: #0d1b2a; /* Dark navy */
+            color: #e0e6ed; /* Light text */
             margin: 0;
             padding: 0;
         }
@@ -38,21 +39,21 @@ $months = [
             left: 30px;
             font-size: 16px;
             text-decoration: none;
-            background-color: rgba(255, 255, 255, 0.9);
-            color: #000;
+            background-color: rgba(255, 255, 255, 0.08);
+            color: #e0e6ed;
             padding: 8px 14px;
             border-radius: 6px;
             font-weight: bold;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.4);
             transition: all 0.3s ease;
             z-index: 1000;
         }
         .back-arrow:hover {
-            background-color: #00ff99;
-            color: #000;
+            background-color: #1b263b;
+            color: #00b4d8; /* Cyan highlight */
         }
         .container {
-            background-color: rgba(249, 245, 245, 0.85);
+            background-color: #1b263b;
             padding: 30px;
             margin: 50px auto;
             border-radius: 12px;
@@ -62,7 +63,7 @@ $months = [
         }
         h2 {
             margin-bottom: 30px;
-            color: #333;
+            color: #90e0ef; /* Light cyan accent */
             text-align: center;
         }
         .month-grid {
@@ -71,26 +72,25 @@ $months = [
             gap: 20px;
         }
         /* Full-card clickable link */
-        /* Full-card clickable link */
-.month-card {
-    display: block;
-    background:rgba(144, 238, 144, 0.57); /* Light green */
-    border-radius: 10px;
-    padding: 25px 15px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
-    transition: transform 0.2s ease, background-color 0.3s ease, box-shadow 0.3s ease;
-    text-align: center;
-    text-decoration: none;
-    color: #003366;
-    font-size: 18px;
-    font-weight: bold;
-}
-.month-card:hover {
-    background-color: #66cc66; /* Darker green on hover */
-    transform: translateY(-5px);
-    box-shadow: 0 6px 15px rgba(0,0,0,0.2);
-}
-
+        .month-card {
+            display: block;
+            background: #90e0ef; /* Light blue */
+            border-radius: 10px;
+            padding: 25px 15px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            transition: transform 0.2s ease, background-color 0.3s ease, box-shadow 0.3s ease;
+            text-align: center;
+            text-decoration: none;
+            color: #0d1b2a; /* Dark navy text */
+            font-size: 18px;
+            font-weight: bold;
+        }
+        .month-card:hover {
+            background-color: #0077b6; /* Dark blue */
+            color: #ffffff;
+            transform: translateY(-5px);
+            box-shadow: 0 6px 15px rgba(0,0,0,0.4);
+        }
         @media (max-width: 600px) {
             .month-card {
                 padding: 20px 10px;

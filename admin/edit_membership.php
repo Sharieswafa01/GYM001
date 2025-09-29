@@ -60,99 +60,119 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <head>
     <title>Edit Membership</title>
     <style>
-        body {
-            background: #ffffff;
-            color: #000000;
-            font-family: Arial, sans-serif;
-            padding: 40px;
-            position: relative;
-        }
+    body {
+        background: #0d1b2a; /* main dark background */
+        color: #ffffff; /* global text color */
+        font-family: Arial, sans-serif;
+        padding: 40px;
+        position: relative;
+    }
 
-        .back-arrow {
-            position: absolute;
-            top: 20px;
-            left: 30px;
-            font-size: 16px;
-            text-decoration: none;
-            background-color: rgba(255, 255, 255, 0.9);
-            color: #000;
-            padding: 8px 14px;
-            border-radius: 6px;
-            font-weight: bold;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-            transition: all 0.3s ease;
-            z-index: 1000;
-        }
+    .back-arrow {
+        position: absolute;
+        top: 20px;
+        left: 30px;
+        font-size: 16px;
+        text-decoration: none;
+        background-color: #1b263b; /* dark button background */
+        color: #ffffff; /* white text */
+        padding: 8px 14px;
+        border-radius: 6px;
+        font-weight: bold;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
+        transition: all 0.3s ease;
+        z-index: 1000;
+    }
 
-        .back-arrow:hover {
-            background-color: #00ff99;
-            color: #000;
-        }
+    .back-arrow:hover {
+        background-color: #3b82f6; /* blue highlight */
+        color: #ffffff;
+    }
 
-        form {
-            max-width: 500px;
-            background: #f7f7f7;
-            padding: 20px;
-            border-radius: 10px;
-            margin: 80px auto 0 auto;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        }
+    h2 {
+        text-align: center;
+        margin-bottom: 20px;
+        font-size: 26px;
+        font-weight: bold;
+        color: #60a5fa; /* accent blue */
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
 
-        input, textarea, select {
-            width: 100%;
-            padding: 10px;
-            margin: 10px 0;
-            border-radius: 8px;
-            border: 1px solid #ccc;
-            background: #ffffff;
-            color: #000000;
-            font-size: 16px;
-        }
+    form {
+        max-width: 500px;
+        background: #1b263b; /* dark card */
+        padding: 20px;
+        border-radius: 10px;
+        margin: 30px auto 0 auto;
+        box-shadow: 0 0 12px rgba(0, 0, 0, 0.6);
+        color: #ffffff; /* text inside form */
+    }
 
-        option {
-            color: #000000;
-        }
+    input, textarea, select {
+        width: 100%;
+        padding: 10px;
+        margin: 10px 0;
+        border-radius: 8px;
+        border: 1px solid #334155; /* subtle dark border */
+        background: #0f172a; /* input background */
+        color: #f1f5f9; /* input text */
+        font-size: 16px;
+    }
 
-        button {
-            background: #00ff99;
-            padding: 10px 20px;
-            border: none;
-            border-radius: 8px;
-            color: #000000;
-            cursor: pointer;
-            font-size: 16px;
-        }
+    option {
+        background: #0f172a;
+        color: #f1f5f9;
+    }
 
-        button:hover {
-            background: #00e68a;
-        }
+    button {
+        background: #3b82f6; /* blue button */
+        padding: 12px 20px;
+        border: none;
+        border-radius: 8px;
+        color: #ffffff;
+        cursor: pointer;
+        font-size: 16px;
+        font-weight: bold;
+        transition: background 0.3s ease;
+    }
 
-        label {
-            font-weight: bold;
-            display: block;
-            margin-top: 10px;
-        }
+    button:hover {
+        background: #2563eb; /* darker blue on hover */
+    }
 
-        .user-info {
-            margin-bottom: 15px;
-            padding: 15px;
-            background: #e7f4e8;
-            border: 1px solid #b7dcb8;
-            border-radius: 8px;
-            font-size: 14px;
-        }
+    label {
+        font-weight: bold;
+        display: block;
+        margin-top: 10px;
+        color: #93c5fd; /* lighter blue labels */
+    }
 
-        .user-info span {
-            display: block;
-            margin-bottom: 5px;
-        }
+    .user-info {
+        margin-bottom: 15px;
+        padding: 15px;
+        background: #1e293b; /* dark panel */
+        border: 1px solid #334155;
+        border-radius: 8px;
+        font-size: 14px;
+        color: #f8fafc; /* near-white text */
+    }
+
+    .user-info strong {
+        color: #60a5fa; /* accent color for titles */
+    }
+
+    .user-info span {
+        display: block;
+        margin-bottom: 5px;
+    }
     </style>
 </head>
 <body>
 
 <a href="manage_membership.php" class="back-arrow">&#8592; </a>
 
-<h2 style="text-align:center;">Edit Membership Plan</h2>
+<h2>Edit Membership Plan</h2>
 
 <div class="user-info">
     <strong>Assigned To:</strong>
@@ -184,11 +204,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <label>Price (₱)</label>
     <input type="number" step="0.01" name="price" value="<?= htmlspecialchars($data['price']) ?>" required>
 
-    
-
     <button type="submit">Update Membership</button>
 </form>
 
 </body>
 </html>
- 

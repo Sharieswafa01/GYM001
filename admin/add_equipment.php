@@ -54,74 +54,100 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <meta charset="UTF-8">
     <title>Add New Equipment</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #eef1f5;
-            padding: 50px;
-            position: relative;
-        }
+:root {
+    --sidebar-dark: #1b263b;
+    --bg-dark: #0d1b2a;
+    --text-light: #e0e0e0;
+    --accent-blue: #2196F3;
+    --accent-red: #ff5252;
+}
 
-        .back-link {
-            position: absolute;
-            top: 20px;
-            left: 30px;
-            font-size: 16px;
-            text-decoration: none;
-            background-color: rgba(255, 255, 255, 0.9);
-            color: #000;
-            padding: 8px 14px;
-            border-radius: 6px;
-            font-weight: bold;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-            transition: all 0.3s ease;
-            z-index: 1000;
-        }
+body {
+    font-family: Arial, sans-serif;
+    background-color: var(--bg-dark);
+    color: var(--text-light);
+    padding: 50px;
+    position: relative;
+}
 
-        .back-link:hover {
-            background-color: rgb(1, 255, 153);
-            color: #000;
-        }
+/* Back button */
+.back-link {
+    position: absolute;
+    top: 20px;
+    left: 30px;
+    font-size: 16px;
+    text-decoration: none;
+    background-color: var(--sidebar-dark);
+    color: var(--text-light);
+    padding: 8px 14px;
+    border-radius: 6px;
+    font-weight: bold;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+    transition: all 0.3s ease;
+    z-index: 1000;
+}
 
-        .container {
-            max-width: 600px;
-            margin: auto;
-            background: white;
-            padding: 30px;
-            border-radius: 10px;
-            box-shadow: 0 0 12px rgba(0, 0, 0, 0.2);
-        }
+.back-link:hover {
+    background-color: #2d3748;
+    color: var(--accent-blue);
+}
 
-        h2 {
-            text-align: center;
-            margin-bottom: 25px;
-        }
+/* Form container */
+.container {
+    max-width: 600px;
+    margin: auto;
+    background: var(--sidebar-dark);
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+}
 
-        input[type="text"],
-        textarea,
-        select,
-        input[type="file"] {
-            width: 100%;
-            padding: 12px;
-            margin-bottom: 15px;
-            border: 1px solid #ccc;
-            border-radius: 6px;
-        }
+h2 {
+    text-align: center;
+    margin-bottom: 25px;
+    color: var(--accent-blue);
+}
 
-        button {
-            background-color: #4CAF50;
-            color: white;
-            padding: 12px;
-            width: 100%;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 1rem;
-        }
+/* Inputs */
+input[type="text"],
+textarea,
+select,
+input[type="file"] {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 15px;
+    border: 1px solid #2e3b55;
+    border-radius: 6px;
+    background: var(--bg-dark);
+    color: var(--text-light);
+}
 
-        button:hover {
-            background-color: #45a049;
-        }
-    </style>
+input:focus,
+textarea:focus,
+select:focus {
+    outline: none;
+    border-color: var(--accent-blue);
+}
+
+/* Buttons */
+button {
+    background-color: var(--accent-blue);
+    color: white;
+    padding: 12px;
+    width: 100%;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: bold;
+    transition: background 0.3s ease;
+}
+
+button:hover {
+    background-color: #1976D2; /* darker blue */
+}
+</style>
+
 </head>
 <body>
 

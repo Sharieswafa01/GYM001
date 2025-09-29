@@ -12,18 +12,24 @@ $search = $_GET['search'] ?? '';
 $searchSql = '';
 if (!empty($search)) {
     $safeSearch = $conn->real_escape_string($search);
-    $searchSql = "AND (first_name LIKE '%$safeSearch%' OR last_name LIKE '%$safeSearch%' OR role LIKE '%$safeSearch%')";
+    $searchSql = "AND (
+        first_name LIKE '%$safeSearch%' 
+        OR last_name LIKE '%$safeSearch%' 
+        OR role LIKE '%$safeSearch%'
+        OR student_id LIKE '%$safeSearch%'
+        OR customer_id LIKE '%$safeSearch%'
+        OR faculty_id LIKE '%$safeSearch%'
+    )";
 }
+
 
 $limit = 5;
 
-$studentsQuery = "SELECT * FROM users WHERE role = 'Student' $searchSql LIMIT $limit";
-$customersQuery = "SELECT * FROM users WHERE role = 'Customer' $searchSql LIMIT $limit";
-$facultyQuery = "SELECT * FROM users WHERE role = 'Faculty' $searchSql LIMIT $limit";
+// Fetch role-based users
+$studentsQuery  = $conn->query("SELECT * FROM users WHERE role = 'Student' $searchSql LIMIT $limit");
+$customersQuery = $conn->query("SELECT * FROM users WHERE role = 'Customer' $searchSql LIMIT $limit");
+$facultyQuery   = $conn->query("SELECT * FROM users WHERE role = 'Faculty' $searchSql LIMIT $limit");
 
-$studentsResult = mysqli_query($conn, $studentsQuery);
-$customersResult = mysqli_query($conn, $customersQuery);
-$facultyResult = mysqli_query($conn, $facultyQuery);
 ?>
 
 <!DOCTYPE html>
@@ -33,196 +39,222 @@ $facultyResult = mysqli_query($conn, $facultyQuery);
     <title>Manage Users</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-    <style>
-        * { box-sizing: border-box; }
+   <style>
+    * { box-sizing: border-box; }
 
-        body {
-            margin: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f0f2f5;
-        }
+    body {
+        margin: 0;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background-color: #0d1b2a; /* Dark navy background */
+        color: #e0e6ed; /* Light text */
+    }
 
-        .dashboard-wrapper { display: flex; }
+    .dashboard-wrapper { display: flex; }
 
-        .sidebar {
-            width: 290px;
-            background-color: #111;
-            color: #fff;
-            height: 100vh;
-            padding: 20px;
-            position: fixed;
-            overflow-y: auto;
-        }
+    .sidebar {
+        width: 290px;
+        background-color: #1b263b; /* Dark sidebar */
+        color: #fff;
+        height: 100vh;
+        padding: 20px;
+        position: fixed;
+        overflow-y: auto;
+        box-shadow: 2px 0 8px rgba(0,0,0,0.5);
+    }
 
-        .sidebar .logo {
-            text-align: center;
-            padding: 30px 0 20px;
-            border-bottom: 1px solid #444;
-            margin-bottom: 30px;
-        }
+    .sidebar .logo {
+        text-align: center;
+        padding: 30px 0 20px;
+        border-bottom: 1px solid #2c2f38;
+        margin-bottom: 30px;
+    }
 
-        .sidebar .logo h2 {
-            margin: 0;
-            font-size: 28px;
-            font-weight: 600;
-            color: #fff;
-        }
+    .sidebar .logo h2 {
+        margin: 0;
+        font-size: 28px;
+        font-weight: 600;
+        color: #3b82f6; /* Cyan accent */
+    }
 
-        .sidebar .nav ul {
-            list-style: none;
-            padding: 0;
-        }
+    .sidebar .nav ul {
+        list-style: none;
+        padding: 0;
+    }
 
-        .sidebar .nav ul li {
-            margin: 18px 0;
-        }
+    .sidebar .nav ul li {
+        margin: 18px 0;
+    }
 
-        .sidebar .nav ul li a {
-            font-size: 18px;
-            font-weight: 500;
-            color: #fff;
-            text-decoration: none;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            padding: 10px 15px;
-            border-radius: 6px;
-            transition: background 0.3s;
-        }
+    .sidebar .nav ul li a {
+        font-size: 18px;
+        font-weight: 500;
+        color: #e0e6ed;
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 10px 15px;
+        border-radius: 6px;
+        transition: background 0.3s, color 0.3s;
+    }
 
-        .sidebar .nav ul li a:hover {
-            background-color: #333;
-            color: #4caf50;
-        }
+    .sidebar .nav ul li a:hover {
+        background-color: #2d3748;
+        color: #00b4d8; /* Bright cyan on hover */
+    }
 
-        .sidebar-logout a {
-            color: #fff;
-            text-decoration: none;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin-top: 60px;
-            font-weight: bold;
-            font-size: 18px;
-            padding: 10px 15px;
-            border-radius: 6px;
-            transition: background 0.3s;
-        }
+    .sidebar-logout a {
+        color: #e0e6ed;
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-top: 60px;
+        font-weight: bold;
+        font-size: 18px;
+        padding: 10px 15px;
+        border-radius: 6px;
+        transition: background 0.3s, color 0.3s;
+    }
 
-        .sidebar-logout a:hover {
-            background-color: #333;
-            color: #f44336;
-        }
+    .sidebar-logout a:hover {
+        background-color: #2d3748;
+        color: #ff6b6b; /* Soft red for logout */
+    }
 
-        .main-content {
-            margin-left: 290px;
-            padding: 40px;
-            flex: 1;
-        }
+    .main-content {
+        margin-left: 290px;
+        padding: 40px;
+        flex: 1;
+    }
 
-        .header-bar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 30px;
-        }
+    .header-bar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 30px;
+    }
 
-        h1 {
-            margin: 0;
-            color: black;
-            font-size: 2rem;
-        }
+    h1 {
+        margin: 0;
+        color: #e0e6ed; /* Accent title */
+        font-size: 2rem;
+    }
 
-        .search-form input[type="text"] {
-            padding: 8px;
-            width: 240px;
-            border-radius: 6px;
-            border: 1px solid #ccc;
-        }
+    .search-form input[type="text"] {
+        padding: 8px;
+        width: 240px;
+        border-radius: 6px;
+        border: 1px solid #2c2f38;
+        background: #14213d;
+        color: #e0e6ed;
+    }
 
-        .search-form button {
-            padding: 8px 12px;
-            border: none;
-            border-radius: 6px;
-            background-color: #007bff;
-            color: white;
-            cursor: pointer;
-        }
+    .search-form button {
+        padding: 8px 12px;
+        border: none;
+        border-radius: 6px;
+        background-color: #0077b6; /* Bright blue */
+        color: white;
+        cursor: pointer;
+    }
 
-        section {
-            margin-bottom: 40px;
-        }
+    .search-form button:hover {
+        background-color: #00b4d8; /* Cyan hover */
+    }
 
-        .user-section {
-            margin-bottom: 60px;
-            background: white;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        }
+    section {
+        margin-bottom: 40px;
+    }
 
-        .view-all-link {
-            display: block;
-            margin-top: 10px;
-            text-align: right;
-        }
+    .user-section {
+        margin-bottom: 60px;
+        background: #1b263b;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.4);
+    }
 
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
+    .view-all-link {
+        display: block;
+        margin-top: 10px;
+        text-align: right;
+        color: #00b4d8;
+        text-decoration: none;
+    }
 
-        th, td {
-            padding: 12px;
-            border-bottom: 1px solid #ccc;
-        }
+    .view-all-link:hover {
+        text-decoration: underline;
+    }
 
-        thead tr {
-            background-color: rgb(242, 241, 241);
-        }
+    table {
+        width: 100%;
+        border-collapse: collapse;
+    }
 
-        .action-buttons {
-            display: flex;
-            gap: 12px;
-            padding: 6px 0;
-        }
+    th, td {
+        padding: 12px;
+        border-bottom: 1px solid #2c2f38;
+    }
 
-        a.update-btn {
-            background-color: #4CAF50;
-            color: white;
-            padding: 6px 12px;
-            border-radius: 4px;
-            font-weight: 500;
-            font-size: 0.75rem;
-            text-decoration: none;
-        }
+    thead tr {
+        background-color: #334155; /* Blue header */
+        color: #fff;
+    }
 
-        a.update-btn:hover {
-            background-color: #45a049;
-        }
+    tbody tr:nth-child(even) {
+        background: #14213d;
+    }
 
-        a.delete-btn {
-            background-color: #f44336;
-            color: white;
-            padding: 6px 12px;
-            border-radius: 4px;
-            font-weight: 500;
-            font-size: 0.75rem;
-            text-decoration: none;
-        }
+    tbody tr:nth-child(odd) {
+        background: #1f2d3d;
+    }
 
-        a.delete-btn:hover {
-            background-color: #d32f2f;
-        }
+    .action-buttons {
+        display: flex;
+        gap: 12px;
+        padding: 6px 0;
+    }
 
-        @media (max-width: 768px) {
-            .dashboard-wrapper { flex-direction: column; }
-            .sidebar { width: 100%; height: auto; position: relative; }
-            .main-content { margin-left: 0; padding: 20px; }
-            .header-bar { flex-direction: column; align-items: flex-start; gap: 15px; }
-            .search-form input[type="text"] { width: 100%; }
-        }
-    </style>
+    a.update-btn {
+        background-color: #0077b6; /* Blue for update */
+        color: white;
+        padding: 6px 12px;
+        border-radius: 4px;
+        font-weight: 500;
+        font-size: 0.75rem;
+        text-decoration: none;
+        transition: background 0.3s;
+    }
+
+    a.update-btn:hover {
+        background-color: #00b4d8; /* Cyan hover */
+    }
+
+    a.delete-btn {
+        background-color: #ff6b6b; /* Red for delete */
+        color: white;
+        padding: 6px 12px;
+        border-radius: 4px;
+        font-weight: 500;
+        font-size: 0.75rem;
+        text-decoration: none;
+        transition: background 0.3s;
+    }
+
+    a.delete-btn:hover {
+        background-color: #d64545;
+    }
+
+    @media (max-width: 768px) {
+        .dashboard-wrapper { flex-direction: column; }
+        .sidebar { width: 100%; height: auto; position: relative; }
+        .main-content { margin-left: 0; padding: 20px; }
+        .header-bar { flex-direction: column; align-items: flex-start; gap: 15px; }
+        .search-form input[type="text"] { width: 100%; }
+    }
+</style>
+
 </head>
 <body>
 
@@ -230,7 +262,7 @@ $facultyResult = mysqli_query($conn, $facultyQuery);
     <!-- Sidebar -->
     <aside class="sidebar">
         <div class="logo">
-            <h2>Gym Admin</h2>
+            <h2>GYM ADMIN</h2>
         </div>
         <nav class="nav">
             <ul>
@@ -259,137 +291,127 @@ $facultyResult = mysqli_query($conn, $facultyQuery);
         </div>
 
         <!-- Students -->
-        <section class="user-section">
-            <h2>Students</h2>
-            <table>
-                <thead>
-                <tr>
-                    <th>No.</th>
-                    <th>ID</th>
-                    <th>Name</th>
-                    <th>Age</th>
-                    <th>Gender</th>
-                    <th>Email</th>
-                    <th>Phone</th>
-                    <th>Role</th>
-                    <th>Course</th>
-                    <th>Section</th>
-                    <th>Actions</th>
-                </tr>
-                </thead>
-                <tbody>
-                <?php $counter = 1; while ($user = mysqli_fetch_assoc($studentsResult)) : ?>
-                    <tr>
-                        <td><?= $counter++ ?></td>
-                        <td><?= htmlspecialchars($user['student_id']) ?></td>
-                        <td><?= htmlspecialchars($user['first_name'] . ' ' . $user['last_name']) ?></td>
-                        <td><?= htmlspecialchars($user['age']) ?></td>
-                        <td><?= htmlspecialchars($user['gender']) ?></td>
-                        <td><?= htmlspecialchars($user['email']) ?></td>
-                        <td><?= htmlspecialchars($user['phone']) ?></td>
-                        <td><?= htmlspecialchars($user['role']) ?></td>
-                        <td><?= htmlspecialchars($user['course']) ?></td>
-                        <td><?= htmlspecialchars($user['section']) ?></td>
-                        <td>
-                            <div class="action-buttons">
-                                <a class="update-btn" href="edit_user.php?id=<?= urlencode($user['id']) ?>">Update</a>
-                                <a class="delete-btn" href="delete_user.php?id=<?= urlencode($user['id']) ?>" onclick="return confirm('Are you sure you want to delete this student?');">Delete</a>
-                            </div>
-                        </td>
-                    </tr>
-                <?php endwhile; ?>
-                </tbody>
-            </table>
-            <a class="view-all-link" href="view_students.php">View All Students →</a>
-        </section>
+       <!-- Students -->
+<section class="user-section">
+    <!-- Heading + Download button -->
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+        <h2 style="margin:0;">Students</h2>
+        <a href="download_users.php" 
+           style="display:inline-block; background:#4CAF50; color:white; padding:10px 18px; 
+                  border-radius:8px; text-decoration:none; font-weight:bold; transition:0.3s;">
+           <i class="fas fa-download"></i> Download All Users
+        </a>
+    </div>
 
-        <!-- Customers -->
-        <section class="user-section">
-            <h2>Customers</h2>
-            <table>
-                <thead>
-                <tr>
-                    <th>No.</th>
-                    <th>Customer ID</th>
-                    <th>Name</th>
-                    <th>Age</th>
-                    <th>Gender</th>
-                    <th>Email</th>
-                    <th>Phone</th>
-                    <th>Role</th>
-                    <th>Payment Plan</th>
-                    <th>Services</th>
-                    <th>Actions</th>
-                </tr>
-                </thead>
-                <tbody>
-                <?php $counter = 1; while ($user = mysqli_fetch_assoc($customersResult)) : ?>
-                    <tr>
-                        <td><?= $counter++ ?></td>
-                        <td><?= htmlspecialchars($user['customer_id']) ?></td>
-                        <td><?= htmlspecialchars($user['first_name'] . ' ' . $user['last_name']) ?></td>
-                        <td><?= htmlspecialchars($user['age']) ?></td>
-                        <td><?= htmlspecialchars($user['gender']) ?></td>
-                        <td><?= htmlspecialchars($user['email']) ?></td>
-                        <td><?= htmlspecialchars($user['phone']) ?></td>
-                        <td><?= htmlspecialchars($user['role']) ?></td>
-                        <td><?= htmlspecialchars($user['payment_plan']) ?></td>
-                        <td><?= htmlspecialchars($user['services']) ?></td>
-                        <td>
-                            <div class="action-buttons">
-                                <a class="update-btn" href="edit_user.php?id=<?= urlencode($user['id']) ?>">Update</a>
-                                <a class="delete-btn" href="delete_user.php?id=<?= urlencode($user['id']) ?>" onclick="return confirm('Are you sure you want to delete this customer?');">Delete</a>
-                            </div>
-                        </td>
-                    </tr>
-                <?php endwhile; ?>
-                </tbody>
-            </table>
-            <a class="view-all-link" href="view_customers.php">View All Customers →</a>
-        </section>
+    <!-- Students Table -->
+    <table>
+        <thead>
+        <tr>
+            <th>No.</th>
+            <th>Student ID</th>
+            <th>Name</th>
+            <th>Course</th>
+            <th>Section</th>
+            <th>Email</th>
+            <th>Phone</th>
+            <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        <?php $counter = 1; while ($user = $studentsQuery->fetch_assoc()): ?>
+            <tr>
+                <td><?= $counter++ ?></td>
+                <td><?= htmlspecialchars($user['student_id']) ?></td>
+                <td><?= htmlspecialchars($user['first_name'] . ' ' . $user['last_name']) ?></td>
+                <td><?= htmlspecialchars($user['course']) ?></td>
+                <td><?= htmlspecialchars($user['section']) ?></td>
+                <td><?= htmlspecialchars($user['email']) ?></td>
+                <td><?= htmlspecialchars($user['phone']) ?></td>
+                <td>
+                    <a class="update-btn" href="edit_user.php?id=<?= urlencode($user['id']) ?>">Update</a>
+                    <a class="delete-btn" href="delete_user.php?id=<?= urlencode($user['id']) ?>" onclick="return confirm('Delete this student?');">Delete</a>
+                </td>
+            </tr>
+        <?php endwhile; ?>
+        </tbody>
+    </table>
+    <a class="view-all-link" href="view_students.php">View All Students →</a>
+</section>
 
-        <!-- Faculty -->
-        <section class="user-section">
-            <h2>Faculty</h2>
-            <table>
-                <thead>
-                <tr>
-                    <th>No.</th>
-                    <th>Faculty ID</th>
-                    <th>Name</th>
-                    <th>Age</th>
-                    <th>Gender</th>
-                    <th>Email</th>
-                    <th>Phone</th>
-                    <th>Role</th>
-                    <th>Department</th>
-                    <th>Actions</th>
-                </tr>
-                </thead>
-                <tbody>
-                <?php $counter = 1; while ($user = mysqli_fetch_assoc($facultyResult)) : ?>
-                    <tr>
-                        <td><?= $counter++ ?></td>
-                        <td><?= htmlspecialchars($user['faculty_id']) ?></td>
-                        <td><?= htmlspecialchars($user['first_name'] . ' ' . $user['last_name']) ?></td>
-                        <td><?= htmlspecialchars($user['age']) ?></td>
-                        <td><?= htmlspecialchars($user['gender']) ?></td>
-                        <td><?= htmlspecialchars($user['email']) ?></td>
-                        <td><?= htmlspecialchars($user['phone']) ?></td>
-                        <td><?= htmlspecialchars($user['role']) ?></td>
-                        <td><?= htmlspecialchars($user['faculty_dept']) ?></td>
-                        <td>
-                            <div class="action-buttons">
-                                <a class="update-btn" href="edit_user.php?id=<?= urlencode($user['id']) ?>">Update</a>
-                                <a class="delete-btn" href="delete_user.php?id=<?= urlencode($user['id']) ?>" onclick="return confirm('Are you sure you want to delete this faculty member?');">Delete</a>
-                            </div>
-                        </td>
-                    </tr>
-                <?php endwhile; ?>
-                </tbody>
-            </table>
-            <a class="view-all-link" href="view_faculty.php">View All Faculty →</a>
-        </section>
+
+<!-- Customers -->
+<section class="user-section">
+    <h2>Customers</h2>
+    <table>
+        <thead>
+        <tr>
+            <th>No.</th>
+            <th>Customer ID</th>
+            <th>Name</th>
+            <th>Payment Plan</th>
+            <th>Services</th>
+            <th>Email</th>
+            <th>Phone</th>
+            <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        <?php $counter = 1; while ($user = $customersQuery->fetch_assoc()): ?>
+            <tr>
+                <td><?= $counter++ ?></td>
+                <td><?= htmlspecialchars($user['customer_id']) ?></td>
+                <td><?= htmlspecialchars($user['first_name'] . ' ' . $user['last_name']) ?></td>
+                <td><?= htmlspecialchars($user['payment_plan']) ?></td>
+                <td><?= htmlspecialchars($user['services']) ?></td>
+                <td><?= htmlspecialchars($user['email']) ?></td>
+                <td><?= htmlspecialchars($user['phone']) ?></td>
+                <td>
+                    <a class="update-btn" href="edit_user.php?id=<?= urlencode($user['id']) ?>">Update</a>
+                    <a class="delete-btn" href="delete_user.php?id=<?= urlencode($user['id']) ?>" onclick="return confirm('Delete this customer?');">Delete</a>
+                </td>
+            </tr>
+        <?php endwhile; ?>
+        </tbody>
+    </table>
+    <a class="view-all-link" href="view_customers.php">View All Customers →</a>
+</section>
+
+
+<!-- Faculty -->
+<section class="user-section">
+    <h2>Staff</h2>
+    <table>
+        <thead>
+        <tr>
+            <th>No.</th>
+            <th>Faculty ID</th>
+            <th>Name</th>
+            <th>Department</th>
+            <th>Email</th>
+            <th>Phone</th>
+            <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        <?php $counter = 1; while ($user = $facultyQuery->fetch_assoc()): ?>
+            <tr>
+                <td><?= $counter++ ?></td>
+                <td><?= htmlspecialchars($user['faculty_id']) ?></td>
+                <td><?= htmlspecialchars($user['first_name'] . ' ' . $user['last_name']) ?></td>
+                <td><?= htmlspecialchars($user['faculty_dept']) ?></td>
+                <td><?= htmlspecialchars($user['email']) ?></td>
+                <td><?= htmlspecialchars($user['phone']) ?></td>
+                <td>
+                    <a class="update-btn" href="edit_user.php?id=<?= urlencode($user['id']) ?>">Update</a>
+                    <a class="delete-btn" href="delete_user.php?id=<?= urlencode($user['id']) ?>" onclick="return confirm('Delete this faculty member?');">Delete</a>
+                </td>
+            </tr>
+        <?php endwhile; ?>
+        </tbody>
+    </table>
+    <a class="view-all-link" href="view_faculty.php">View All Staff →</a>
+</section>
+
     </div>
 </div>
 

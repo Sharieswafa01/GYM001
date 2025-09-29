@@ -38,29 +38,32 @@ $smtpPass = 'your-app-password';         // Gmail App Password
 $smtpPort = 587;
 
 // ---------------- Alert configuration ----------------
-$alertDays = 7; // send alerts X days before membership expiry
+$alertDays = 1; // send alerts 1 day before expiry
 $today = date('Y-m-d');
 
 // ---------------- Fetch expiring members ----------------
 // Replace `membership_end` with your actual expiry column name
 $stmt = $pdo->prepare("
     SELECT * FROM users 
-    WHERE membership_end BETWEEN :today AND DATE_ADD(:today, INTERVAL :days DAY)
+    WHERE membership_end = DATE_ADD(:today, INTERVAL :days DAY)
 ");
 $stmt->execute(['today' => $today, 'days' => $alertDays]);
 $members = $stmt->fetchAll();
 
 if (!$members) {
-    echo "✅ No memberships expiring in the next $alertDays days.";
+    echo "<script>alert('✅ No memberships expiring in the next $alertDays day(s).');</script>";
     exit;
 }
 
 // ---------------- Send alerts ----------------
+$sentEmails = 0;
+$sentSMS = 0;
+
 foreach ($members as $member) {
     $email = $member['email'];
     $name = $member['name'];
     $phone = $member['phone'];
-    $end_date = $member['membership_end']; // change if your column is different
+    $end_date = $member['membership_end']; 
 
     // ---------------- Email via PHPMailer ----------------
     $mail = new PHPMailer(true);
@@ -73,14 +76,14 @@ foreach ($members as $member) {
         $mail->SMTPSecure = 'tls';
         $mail->Port       = $smtpPort;
 
-        $mail->setFrom('admin@gym.com', 'Gym Admin');
+        $mail->setFrom('admin@gym.com', 'CTU GYMTECH Admin');
         $mail->addAddress($email, $name);
 
         $mail->Subject = "Membership Expiry Alert";
-        $mail->Body    = "Dear $name,\n\nThis is a reminder that your gym membership will expire on $end_date.\nPlease renew it to continue enjoying our services.\n\nThank you,\nGym Admin";
+        $mail->Body    = "Good day $name,\n\nI would like to inform you that your membership in CTU GYMTECH is about to expire in 24 hours, on $end_date.\nPlease renew your membership to continue having access to the gym.\n\nThank you,\nCTU GYMTECH Admin";
 
         $mail->send();
-        echo "✅ Email sent to $email<br>";
+        $sentEmails++;
     } catch (Exception $e) {
         echo "❌ Email error for $email: " . $mail->ErrorInfo . "<br>";
     }
@@ -94,12 +97,17 @@ foreach ($members as $member) {
 
         $twilio->messages->create($phone, [
             'from' => $twilioFrom,
-            'body' => "Hi $name! Your gym membership expires on $end_date. Please renew it soon. - Gym Admin"
+            'body' => "Hi $name! Your gym membership expires in 24 hours on $end_date. Please renew it soon. - CTU GYMTECH Admin"
         ]);
-
-        echo "✅ SMS sent to $phone<br>";
+        $sentSMS++;
     } catch (Exception $e) {
         echo "❌ SMS error for $phone: " . $e->getMessage() . "<br>";
     }
 }
+
+// ---------------- Final confirmation popup ----------------
+echo "<script>
+    alert('✅ Alerts sent successfully!\\nEmails sent: $sentEmails\\nSMS sent: $sentSMS');
+    window.location.href = 'admin_dashboard.php'; // Redirect back to dashboard
+</script>";
 ?>

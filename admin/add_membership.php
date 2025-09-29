@@ -6,9 +6,16 @@ if (!isset($_SESSION['admin_id'])) {
 }
 include('../user/db_connection.php');
 
-// ✅ Only fetch users with role = 'Customer'
-$user_query = "SELECT id, first_name, last_name, email, phone FROM users WHERE role = 'Customer' ORDER BY first_name";
+// ✅ Only fetch customers who do NOT already have a membership
+$user_query = "
+    SELECT u.id, u.first_name, u.last_name, u.email, u.phone
+    FROM users u
+    WHERE u.role = 'Customer'
+      AND u.id NOT IN (SELECT user_id FROM memberships)
+    ORDER BY u.first_name
+";
 $users_result = $conn->query($user_query);
+
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $user_id = intval($_POST['user_id']);
@@ -44,84 +51,93 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <head>
     <title>Add Membership Service</title>
     <style>
-        body {
-            background: #ffffff;
-            color: #000000;
-            font-family: Arial, sans-serif;
-            padding: 40px;
-            position: relative;
-        }
+    body {
+        background: #0d1b2a; /* dark background */
+        color: #ffffff;     /* white text */
+        font-family: Arial, sans-serif;
+        padding: 40px;
+        position: relative;
+    }
 
-        .back-arrow {
-            position: absolute;
-            top: 20px;
-            left: 30px;
-            font-size: 16px;
-            text-decoration: none;
-            background-color: rgba(255, 255, 255, 0.9);
-            color: #000;
-            padding: 8px 14px;
-            border-radius: 6px;
-            font-weight: bold;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-            transition: all 0.3s ease;
-            z-index: 1000;
-        }
+    .back-arrow {
+        position: absolute;
+        top: 20px;
+        left: 30px;
+        font-size: 16px;
+        text-decoration: none;
+        background-color: #1b263b;
+        color: #ffffff;
+        padding: 8px 14px;
+        border-radius: 6px;
+        font-weight: bold;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.4);
+        transition: all 0.3s ease;
+        z-index: 1000;
+    }
 
-        .back-arrow:hover {
-            background-color: #00ff99;
-            color: #000;
-        }
+    .back-arrow:hover {
+        background-color: #243a63; /* hover dark blue */
+        color: #3b82f6;            /* accent blue */
+    }
 
-        form {
-            max-width: 500px;
-            background: #f7f7f7;
-            padding: 20px;
-            border-radius: 10px;
-            margin: 80px auto 0 auto;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        }
+    form {
+        max-width: 500px;
+        background: #1b263b; /* dark form background */
+        padding: 20px;
+        border-radius: 10px;
+        margin: 80px auto 0 auto;
+        box-shadow: 0 0 15px rgba(0, 0, 0, 0.6);
+    }
 
-        input, textarea, select {
-            width: 100%;
-            padding: 10px;
-            margin: 10px 0;
-            border-radius: 8px;
-            border: 1px solid #ccc;
-            background: #ffffff;
-            color: #000000;
-            font-size: 16px;
-        }
+    input, textarea, select {
+        width: 100%;
+        padding: 10px;
+        margin: 10px 0;
+        border-radius: 8px;
+        border: 1px solid #334155;
+        background: #0d1b2a;
+        color: #ffffff;
+        font-size: 16px;
+    }
 
-        button {
-            background: #28a745;
-            padding: 10px 20px;
-            border: none;
-            border-radius: 8px;
-            color: white;
-            cursor: pointer;
-            font-size: 16px;
-        }
+    input:focus, textarea:focus, select:focus {
+        outline: 2px solid #3b82f6; /* blue glow */
+    }
 
-        button:hover {
-            background: #218838;
-        }
+    button {
+        background: #3b82f6; /* blue button */
+        padding: 10px 20px;
+        border: none;
+        border-radius: 8px;
+        color: white;
+        cursor: pointer;
+        font-size: 16px;
+        transition: background 0.3s ease;
+    }
 
-        label {
-            font-weight: bold;
-            margin-top: 10px;
-            display: block;
-        }
+    button:hover {
+        background: #2563eb; /* darker blue */
+    }
 
-        h2 {
-            text-align: center;
-        }
+    label {
+        font-weight: bold;
+        margin-top: 10px;
+        display: block;
+        color: #ffffff;
+    }
 
-        .readonly-field {
-            background-color: #e9ecef;
-            pointer-events: none;
-        }
-    </style>
+    h2 {
+        text-align: center;
+        color: #3b82f6; /* accent title */
+    }
+
+    .readonly-field {
+        background-color: #243a63;
+        color: #94a3b8;
+        pointer-events: none;
+    }
+</style>
+
 </head>
 <body>
 

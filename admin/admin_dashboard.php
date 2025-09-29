@@ -156,10 +156,22 @@ if ($r = $conn->query("SELECT COUNT(*) as total_equipment FROM equipment")) {
     $equipmentCount = intval($r->fetch_assoc()['total_equipment'] ?? 0);
 }
 
+// Count only active memberships (same logic as manage_membership.php)
+// Count all active memberships (not per user)
 $membershipCount = 0;
-if ($r = $conn->query("SELECT COUNT(*) as total_memberships FROM memberships")) {
+$sql = "
+    SELECT COUNT(*) AS total_memberships
+    FROM memberships
+    WHERE DATE_ADD(start_date, INTERVAL duration DAY) >= CURDATE()
+";
+if ($r = $conn->query($sql)) {
     $membershipCount = intval($r->fetch_assoc()['total_memberships'] ?? 0);
 }
+
+if ($r = $conn->query($sql)) {
+    $membershipCount = intval($r->fetch_assoc()['total_memberships'] ?? 0);
+}
+
 
 // Active now: today's attendance with status 'Login' and logout_time IS NULL
 $activeNow = 0;
@@ -210,95 +222,320 @@ if ($res = $conn->query($recentQuery)) {
     <title>Admin Dashboard</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="css/all.min.css">
-    <style>
-        /* ========== Styles (kept from your original, slightly organized) ========== */
-        .blinking { animation: blink 1s infinite; }
-        @keyframes blink { 0%,100%{opacity:1}50%{opacity:0} }
+   <style>
+    /* ========== Updated Dark Theme ========== */
+    /* ========== Updated Dark Theme ========== */
+:root {
+    --background-dark: #0d1b2a;   /* deep navy */
+    --sidebar-dark: #1b263b;      /* sidebar navy */
+    --card-bg: #1e293b;           /* slate blue-gray */
+    --text-light: #f1f5f9;        /* near white */
+    --text-muted: #94a3b8;        /* muted gray-blue */
+    --accent-blue: #3b82f6;       /* bright cyan/blue */
+    --accent-green: #22c55e;      /* modern green */
+    --accent-red: #ef4444;        /* alert red */
+}
 
-        * { box-sizing: border-box; }
-        body {
-            margin: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f0f2f5;
-            color: #222;
-        }
+* {
+    box-sizing: border-box;
+}
 
-        .dashboard-wrapper { display:flex; height:100vh; overflow:hidden; }
+body {
+    margin: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: var(--background-dark);
+    color: var(--text-light);
+}
 
-        /* Sidebar */
-        .sidebar {
-            width: 290px;
-            background: #111;
-            backdrop-filter: blur(6px);
-            color: #fff;
-            padding: 20px 20px 40px;
-            position: fixed;
-            height: 100vh;
-            overflow-y: auto;
-        }
-        .sidebar .logo { text-align:center; padding:30px 0 20px; border-bottom:1px solid #444; margin-bottom:30px; }
-        .sidebar .logo h2 { margin:0; font-size:28px; font-weight:600; letter-spacing:1.5px; color:#fff; }
-        .sidebar .nav ul { list-style:none; padding:0; margin:0; }
-        .sidebar .nav ul li { margin:18px 0; }
-        .sidebar .nav ul li a {
-            font-size:18px; font-weight:500; color:#fff; text-decoration:none;
-            display:flex; align-items:center; gap:10px; padding:10px 15px; border-radius:6px;
-            transition: background .3s, color .3s;
-        }
-        .sidebar .nav ul li a:hover { background-color:#333; color:#4caf50; }
-        .sidebar-logout a {
-            color:#fff; text-decoration:none; display:flex; align-items:center; gap:10px;
-            margin-top:60px; font-weight:bold; font-size:18px; padding:10px 15px; border-radius:6px;
-            transition: background .3s, color .3s;
-        }
-        .sidebar-logout a:hover { background-color:#333; color:#f44336; }
+.dashboard-wrapper {
+    display: flex;
+    height: 100vh;
+    overflow: hidden;
+}
 
-        /* Main content */
-        .main-content { margin-left:290px; padding:40px; flex:1; overflow-y:auto; }
-        h1 { font-size:2.2rem; margin-bottom:20px; color:#333; }
+/* Sidebar */
+.sidebar {
+    width: 290px;
+    background: var(--sidebar-dark);
+    backdrop-filter: blur(6px);
+    color: var(--text-light);
+    padding: 20px 20px 40px;
+    position: fixed;
+    height: 100vh;
+    overflow-y: auto;
+    border-right: 1px solid #334155; /* subtle divider */
+}
 
-        .dashboard-cards { display:flex; flex-wrap:wrap; gap:30px; margin-bottom:40px; }
-        .card-link { text-decoration:none; color:inherit; flex:1; min-width:250px; }
-        .card {
-            background-color:#ffffff; padding:25px; border-radius:12px; box-shadow:0 0 15px rgba(0,0,0,0.1);
-            text-align:center; transition: transform .2s ease, box-shadow .2s ease;
-        }
-        .card:hover { transform:translateY(-5px); box-shadow:0 0 25px rgba(0,0,0,0.15); }
-        .card i { font-size:40px; margin-bottom:10px; color:#4CAF50; }
-        .card h3 { margin:10px 0 5px; font-size:22px; }
-        .card .count { font-size:28px; font-weight:bold; color:#222; }
+.sidebar .logo {
+    text-align: center;
+    padding: 30px 0 20px;
+    border-bottom: 1px solid #334155;
+    margin-bottom: 30px;
+}
 
-        .attendance-tracking { background:#fff; padding:25px; border-radius:12px; box-shadow:0 0 15px rgba(0,0,0,0.1); }
-        .attendance-header { display:flex; justify-content:space-between; align-items:center; }
-        .attendance-header h2 { font-size:1.6rem; color:#222; margin:0; }
-        .view-all { font-size:14px; text-decoration:none; color:#4CAF50; font-weight:bold; }
+.sidebar .logo h2 {
+    margin: 0;
+    font-size: 28px;
+    font-weight: 600;
+    color: var(--accent-blue);
+}
 
-        table { width:100%; border-collapse:collapse; background-color:#f9f9f9; margin-top:15px; }
-        thead { background-color:#ddd; }
-        table th, table td { padding:14px; text-align:left; border-bottom:1px solid #ccc; }
-        .status-login { color:#4CAF50; font-weight:bold; }
-        .status-logout { color:#F44336; font-weight:bold; }
+.sidebar .nav ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
 
-        /* Top icons */
-        .top-icons {
-            position: fixed; top: 20px; right: 20px; z-index: 1000; display:flex; align-items:center; gap:20px;
-        }
-        .top-icons a { text-decoration:none; position:relative; display:inline-block; }
-        .top-icons .notification-icon i { font-size:22px; color:#333; }
-        .top-icons .notification-icon:hover i { color:#4CAF50; }
-        .top-icons .profile-pic img { width:45px; height:45px; border-radius:50%; object-fit:cover; border:2px solid #4CAF50; }
-        .badge {
-            position:absolute; top:-6px; right:-6px; background:red; color:white; font-size:10px; font-weight:bold;
-            padding:2px 6px; border-radius:50%;
-        }
+.sidebar .nav ul li {
+    margin: 18px 0;
+}
 
-        @media (max-width: 768px) {
-            .dashboard-wrapper { flex-direction:column; }
-            .sidebar { width:100%; height:auto; position:relative; }
-            .main-content { margin-left:0; padding:20px; }
-            .dashboard-cards { flex-direction:column; }
-        }
-    </style>
+.sidebar .nav ul li a {
+    font-size: 18px;
+    font-weight: 500;
+    color: var(--text-light);
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 15px;
+    border-radius: 8px;
+    transition: background 0.3s, color 0.3s;
+}
+
+.sidebar .nav ul li a:hover {
+    background-color: #2d3748;
+    color: var(--accent-blue);
+}
+
+.sidebar-logout a {
+    color: var(--text-light);
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 60px;
+    font-weight: bold;
+    font-size: 18px;
+    padding: 10px 15px;
+    border-radius: 8px;
+    transition: background 0.3s, color 0.3s;
+}
+
+.sidebar-logout a:hover {
+    background-color: #2d3748;
+    color: var(--accent-red);
+}
+
+/* Active link */
+.sidebar .nav ul li a.active {
+    background-color: #2d3748;
+    color: var(--accent-blue);
+    font-weight: 600;
+}
+
+/* Main content */
+.main-content {
+    margin-left: 310px;   /* space from sidebar */
+    padding: 50px;
+    flex: 1;
+    overflow-y: auto;
+}
+
+h1 {
+    font-size: 2.2rem;
+    margin-bottom: 20px;
+    color: var(--text-light);
+}
+
+/* Dashboard cards */
+.dashboard-cards {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 30px;
+    margin-bottom: 50px;
+}
+
+.card-link {
+    text-decoration: none;
+    color: inherit;
+}
+
+.card {
+    background-color: var(--card-bg);
+    padding: 25px;
+    border-radius: 12px;
+    box-shadow: 0 0 20px rgba(0,0,0,0.4);
+    text-align: center;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    height: 160px;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 0 30px rgba(0,0,0,0.6);
+}
+
+.card i {
+    font-size: 40px;
+    margin-bottom: 10px;
+    color: var(--accent-blue);
+}
+
+.card h3 {
+    margin: 10px 0 5px;
+    font-size: 20px;
+    color: var(--text-light);
+}
+
+.card .count {
+    font-size: 24px;
+    font-weight: bold;
+    color: var(--accent-blue);
+}
+
+/* Attendance section */
+.attendance-tracking {
+    background: var(--card-bg);
+    padding: 25px;
+    border-radius: 12px;
+    box-shadow: 0 0 20px rgba(0,0,0,0.4);
+}
+
+.attendance-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.attendance-header h2 {
+    font-size: 1.6rem;
+    color: var(--text-light);
+    margin: 0;
+}
+
+.view-all {
+    font-size: 14px;
+    text-decoration: none;
+    color: var(--accent-blue);
+    font-weight: bold;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: var(--sidebar-dark);
+    margin-top: 15px;
+    color: var(--text-light);
+}
+
+thead {
+    background-color: #334155;
+}
+
+table th, table td {
+    padding: 14px;
+    text-align: left;
+    border-bottom: 1px solid #475569;
+}
+
+.status-login {
+    color: var(--accent-green);
+    font-weight: bold;
+}
+
+.status-logout {
+    color: var(--accent-red);
+    font-weight: bold;
+}
+
+/* Top icons */
+.top-icons {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.notification-icon {
+    position: relative; /* ensure badge sticks to bell */
+    display: inline-block;
+}
+
+.notification-icon i {
+    font-size: 22px;
+    color: var(--text-light);
+}
+
+.notification-icon:hover i {
+    color: var(--accent-blue);
+}
+
+.profile-pic img {
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid var(--accent-blue);
+}
+
+.badge {
+    position: absolute;
+    top: -6px;
+    right: -6px;
+    background: var(--accent-red);
+    color: white;
+    font-size: 10px;
+    font-weight: bold;
+    padding: 2px 6px;
+    border-radius: 50%;
+    line-height: 1;
+}
+
+/* Responsive adjustments */
+@media (max-width: 1200px) {
+    .dashboard-cards {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .dashboard-wrapper {
+        flex-direction: column;
+    }
+
+    .sidebar {
+        width: 100%;
+        height: auto;
+        position: relative;
+        border-right: none;
+    }
+
+    .main-content {
+        margin-left: 0;
+        padding: 20px;
+    }
+
+    .dashboard-cards {
+        grid-template-columns: 1fr;
+    }
+
+    .top-icons {
+        position: static;
+        justify-content: flex-end;
+        margin: 10px 0;
+    }
+}
+
+</style>
+
+
 </head>
 <body>
 
@@ -317,6 +554,7 @@ if ($res = $conn->query($recentQuery)) {
         <img src="<?= htmlspecialchars($adminPhoto) ?>" alt="Admin profile picture">
     </a>
 </div>
+
 
 <script>
 /* Notification polling
@@ -381,7 +619,7 @@ if ($res = $conn->query($recentQuery)) {
 
 <div class="dashboard-wrapper">
     <aside class="sidebar" role="navigation" aria-label="Sidebar Navigation">
-        <div class="logo"><h2>Gym Admin</h2></div>
+        <div class="logo"><h2>GYM ADMIN</h2></div>
         <nav class="nav" role="menu">
             <ul>
                 <li><a href="admin_dashboard.php"><i class="fas fa-chart-line" aria-hidden="true"></i> Dashboard</a></li>
@@ -432,6 +670,7 @@ if ($res = $conn->query($recentQuery)) {
                     <i class="fas fa-credit-card" aria-hidden="true"></i>
                     <h3>Membership</h3>
                     <p>Total Plans: <span class="count"><?= intval($membershipCount) ?></span></p>
+
                 </div>
             </a>
         </section>
