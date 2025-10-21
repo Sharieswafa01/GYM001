@@ -3,150 +3,87 @@ session_start();
 ini_set('display_errors', 1);
 error_reporting(E_ALL);
 
-require __DIR__ . '/config.php'; 
-require __DIR__ . '/../vendor/autoload.php';
+include 'config.php'; // Database connection file
 
-use Picqer\Barcode\BarcodeGeneratorPNG;
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    // Sanitize and retrieve form data
+    $first_name = htmlspecialchars($_POST['first_name'] ?? '');
+    $last_name = htmlspecialchars($_POST['last_name'] ?? '');
+    $age = (int)($_POST['age'] ?? 0);
+    $gender = htmlspecialchars($_POST['gender'] ?? '');
+    $email = filter_var($_POST['email'] ?? '', FILTER_SANITIZE_EMAIL);
+    $phone = htmlspecialchars($_POST['phone'] ?? '');
+    $role = htmlspecialchars($_POST['role'] ?? '');
+    $payment_plan = htmlspecialchars($_POST['payment_plan'] ?? '');
+    $services = htmlspecialchars($_POST['services'] ?? '');
 
-try {
-    if ($_SERVER["REQUEST_METHOD"] !== "POST") {
-        throw new Exception("Invalid request method.");
+    // Optional role-specific fields
+    $student_id = null;
+    $course = null;
+    $section = null;
+    $customer_id = null;
+    $faculty_id = null;
+    $faculty_dept = null;
+
+    if ($role == "Student") {
+        $student_id = htmlspecialchars($_POST['student_id'] ?? '');
+        $course = htmlspecialchars($_POST['course'] ?? '');
+        $section = htmlspecialchars($_POST['section'] ?? '');
+    } elseif ($role == "Customer") {
+        $customer_id = str_pad(rand(0, 9999999), 7, '0', STR_PAD_LEFT);
+    } elseif ($role == "Faculty") {
+        $faculty_id = htmlspecialchars($_POST['faculty_id'] ?? '');
+        $faculty_dept = htmlspecialchars($_POST['faculty_dept'] ?? '');
     }
 
-    // --- Retrieve & sanitize form data ---
-    $first_name   = trim($_POST['first_name'] ?? '');
-    $last_name    = trim($_POST['last_name'] ?? '');
-    $age          = (int)($_POST['age'] ?? 0);
-    $gender       = trim($_POST['gender'] ?? '');
-    $email        = filter_var($_POST['email'] ?? '', FILTER_VALIDATE_EMAIL);
-    $phone        = preg_replace('/[^0-9+]/', '', $_POST['phone'] ?? '');
-    $role         = trim($_POST['role'] ?? '');
-    $payment_plan = trim($_POST['payment_plan'] ?? '');
-    $services     = trim($_POST['services'] ?? '');
-
-    if (!$first_name || !$last_name || !$email || !$phone || !$role) {
-        throw new Exception("Required fields are missing. Please complete all mandatory fields.");
-    }
-
-    // --- Role-based fields ---
-    $student_id = $course = $section = $customer_id = $faculty_id = $faculty_dept = null;
-    $user_id = null;
-
-    if ($role === "Student") {
-        $student_id = trim($_POST['student_id'] ?? '');
-        $course     = trim($_POST['course'] ?? '');
-        $section    = trim($_POST['section'] ?? '');
-        if (!$student_id || !$course || !$section) {
-            throw new Exception("Please complete all student details.");
-        }
-        $user_id = $student_id;
-    } elseif ($role === "Customer") {
-        $customer_id = str_pad((string)random_int(0, 9999999), 7, '0', STR_PAD_LEFT);
-        $user_id     = $customer_id;
-    } elseif ($role === "Faculty") {
-        $faculty_id   = trim($_POST['faculty_id'] ?? '');
-        $faculty_dept = trim($_POST['faculty_dept'] ?? '');
-        if (!$faculty_id || !$faculty_dept) {
-            throw new Exception("Please complete all faculty details.");
-        }
-        $user_id = $faculty_id;
-    } else {
-        throw new Exception("Invalid role selected.");
-    }
-
-    // --- Check for duplicates ---
-    $check_sql = "SELECT id FROM users WHERE email = :email OR phone = :phone LIMIT 1";
+    // Check for duplicate email or phone
+    $check_sql = "SELECT id FROM users WHERE email = ? OR phone = ?";
     $check_stmt = $conn->prepare($check_sql);
-    $check_stmt->execute([':email' => $email, ':phone' => $phone]);
-    if ($check_stmt->fetch()) {
-        throw new Exception("This email or phone number is already registered.");
+    $check_stmt->bind_param("ss", $email, $phone);
+    $check_stmt->execute();
+    $check_stmt->store_result();
+
+    if ($check_stmt->num_rows > 0) {
+        $_SESSION['error'] = "This email or phone number is already registered.";
+        header("Location: signup.php");
+        exit();
     }
 
-    // --- Barcode setup (for Customers only) ---
-    $barcode_dir_fs  = __DIR__ . '/../barcodes/';
-    $project_name    = basename(dirname(__DIR__)); 
-    $barcode_dir_web = '/' . $project_name . '/barcodes/';
-
-    if (!is_dir($barcode_dir_fs)) {
-        mkdir($barcode_dir_fs, 0755, true);
-    }
-
-    $barcode_filename = $user_id . '.png';
-    $barcode_path_fs  = $barcode_dir_fs . $barcode_filename;
-    $barcode_path_web = $barcode_dir_web . $barcode_filename;
-
-    if ($role === "Customer") {
-        $generator = new BarcodeGeneratorPNG();
-        $barcode   = $generator->getBarcode($user_id, $generator::TYPE_CODE_128);
-        file_put_contents($barcode_path_fs, $barcode);
-    } else {
-        $barcode_path_web = null;
-    }
-
-    // --- Insert data into database ---
+    // Insert new user
     $sql = "INSERT INTO users (
-        first_name, last_name, age, gender, email, phone, role,
-        student_id, course, section,
-        customer_id, payment_plan, services,
-        faculty_id, faculty_dept, barcode_path
-    ) VALUES (
-        :first_name, :last_name, :age, :gender, :email, :phone, :role,
-        :student_id, :course, :section,
-        :customer_id, :payment_plan, :services,
-        :faculty_id, :faculty_dept, :barcode_path
-    )";
+                first_name, last_name, age, gender, email, phone, role,
+                student_id, course, section,
+                customer_id, payment_plan, services,
+                faculty_id, faculty_dept
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
     $stmt = $conn->prepare($sql);
-    $stmt->execute([
-        ':first_name'   => $first_name,
-        ':last_name'    => $last_name,
-        ':age'          => $age,
-        ':gender'       => $gender,
-        ':email'        => $email,
-        ':phone'        => $phone,
-        ':role'         => $role,
-        ':student_id'   => $student_id,
-        ':course'       => $course,
-        ':section'      => $section,
-        ':customer_id'  => $customer_id,
-        ':payment_plan' => $payment_plan,
-        ':services'     => $services,
-        ':faculty_id'   => $faculty_id,
-        ':faculty_dept' => $faculty_dept,
-        ':barcode_path' => $barcode_path_web
-    ]);
-
-    // --- Save session data for success page ---
-    $_SESSION['role'] = $role;
-    $_SESSION['user_id'] = $user_id;
-    $_SESSION['barcode'] = $barcode_path_web;
-    $_SESSION['customer_id'] = $customer_id;
-
-    // --- Redirect based on role ---
-    if ($role === "Customer" && $barcode_path_web) {
-        header("Location: /{$project_name}/user/barcode_display.php?id=" . urlencode($user_id));
-    } else {
-        header("Location: /{$project_name}/user/registration_success.php");
+    if (!$stmt) {
+        die("Database prepare failed: " . $conn->error);
     }
+
+    $stmt->bind_param(
+        "ssissssssssssss", 
+        $first_name, $last_name, $age, $gender, $email, $phone, $role,
+        $student_id, $course, $section,
+        $customer_id, $payment_plan, $services,
+        $faculty_id, $faculty_dept
+    );
+
+    if ($stmt->execute()) {
+        $_SESSION['message'] = "Registration successful! Please log in.";
+        header("Location: user_login.php");
+        exit();
+    } else {
+        error_log("Execute failed: " . $stmt->error);
+        $_SESSION['error'] = "An error occurred. Please try again later.";
+        header("Location: signup.php");
+        exit();
+    }
+} else {
+    header("Location: signup.php");
     exit();
 
 } catch (Exception $e) {
-    echo "<div style='
-        background:#ffdddd;
-        border:1px solid #ff5c5c;
-        padding:15px;
-        width:500px;
-        margin:50px auto;
-        font-family:Arial,sans-serif;
-        border-radius:10px;
-        text-align:center;
-    '>
-    <h3 style='color:#b30000;'>Signup Error ❌</h3>
-    <p>" . htmlspecialchars($e->getMessage()) . "</p>
-    <a href='signup.php' style='display:inline-block;margin-top:10px;
-        padding:8px 15px;background:#b30000;color:white;
-        border-radius:5px;text-decoration:none;'>Back to Sign Up</a>
-    </div>";
-    exit();
+    die("SIGNUP ERROR: " . $e->getMessage());
 }
-?>

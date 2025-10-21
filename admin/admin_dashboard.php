@@ -150,14 +150,10 @@ if ($r = $conn->query("SELECT COUNT(*) as total_equipment FROM equipment")) {
     $equipmentCount = intval($r->fetch_assoc()['total_equipment'] ?? 0);
 }
 
-// Count total memberships (as seen in Manage Membership)
 $membershipCount = 0;
-$sql = "SELECT COUNT(*) AS total_memberships FROM memberships";
-if ($r = $conn->query($sql)) {
+if ($r = $conn->query("SELECT COUNT(*) as total_memberships FROM memberships")) {
     $membershipCount = intval($r->fetch_assoc()['total_memberships'] ?? 0);
 }
-
-
 
 // Active now: today's attendance with status 'Login' and logout_time IS NULL
 $activeNow = 0;

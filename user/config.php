@@ -1,12 +1,8 @@
 <?php
-// ==============================
-// DATABASE CONFIGURATION
-// ==============================
-
-$host = "127.0.0.1"; // or "localhost"
-$dbname = "gym_management";
-$username = "root";
-$password = ""; // Default in XAMPP is empty
+$servername = "localhost"; // Your database host, usually 'localhost'
+$username = "root"; // Your database username (default is 'root' on local server)
+$password = ""; // Your database password (empty for local by default)
+$dbname = "gym_management"; // Name of the new database
 
 // Create PDO connection
 try {

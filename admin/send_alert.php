@@ -104,8 +104,6 @@ foreach ($members as $member) {
         echo "❌ SMS error for $phone: " . $e->getMessage() . "<br>";
     }
 }
-<<<<<<< HEAD
-=======
 
 // ---------------- Final confirmation popup ----------------
 echo "<script>
@@ -113,4 +111,3 @@ echo "<script>
     window.location.href = 'admin_dashboard.php'; // Redirect back to dashboard
 </script>";
 ?>
->>>>>>> 3d9d5ab (UI changes to match the GYMTECH: FITNESS APP)
