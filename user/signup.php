@@ -1,47 +1,99 @@
-<?php session_start(); ?>
+<?php
+session_start();
+include('db_connection.php'); // Make sure this connects to gym_management
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $first_name = trim($_POST['first_name']);
+    $last_name  = trim($_POST['last_name']);
+    $age        = intval($_POST['age']);
+    $gender     = $_POST['gender'];
+    $email      = trim($_POST['email']);
+    $phone      = trim($_POST['phone']);
+    $role       = $_POST['role'];
+
+    $waiver     = isset($_POST['waiver']) ? 1 : 0;
+    $waiver_date = $waiver ? date('Y-m-d H:i:s') : NULL;
+
+    // Role-based fields
+    $student_id = ($role === 'Student') ? trim($_POST['student_id']) : NULL;
+    $course     = ($role === 'Student') ? trim($_POST['course']) : NULL;
+    $section    = ($role === 'Student') ? trim($_POST['section']) : NULL;
+
+    $customer_id  = ($role === 'Customer') ? trim($_POST['customer_id']) : NULL;
+    $payment_plan = ($role === 'Customer') ? trim($_POST['payment_plan']) : NULL;
+    $services     = ($role === 'Customer') ? trim($_POST['services']) : NULL;
+
+    $faculty_id   = ($role === 'Faculty') ? trim($_POST['faculty_id']) : NULL;
+    $faculty_dept = ($role === 'Faculty') ? trim($_POST['faculty_dept']) : NULL;
+
+    // Insert user info into users table
+    $sql = "INSERT INTO users (
+        first_name, last_name, age, gender, email, phone, role,
+        waiver_signed, waiver_date, student_id, course, section,
+        customer_id, payment_plan, services, faculty_id, faculty_dept, created_at
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())";
+
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param(
+        "ssissssisssssssss",
+        $first_name, $last_name, $age, $gender, $email, $phone, $role,
+        $waiver, $waiver_date,
+        $student_id, $course, $section,
+        $customer_id, $payment_plan, $services,
+        $faculty_id, $faculty_dept
+    );
+
+    if ($stmt->execute()) {
+        $_SESSION['success'] = "Registration successful!";
+        header("Location: user_login.php");
+        exit();
+    } else {
+        echo "<p style='color:red;'>Error: " . $stmt->error . "</p>";
+    }
+
+    $stmt->close();
+}
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>User Sign Up - CTU Danao Gym</title>
-    <link rel="stylesheet" href="css/user_signup.css">
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>User Sign Up - CTU Danao Gym</title>
+<link rel="stylesheet" href="css/user_signup.css">
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 <body>
 <div class="container">
-    <h2>Kindly provide the required details</h2>
-    <form id="signup_form" action="signup_process.php" method="POST">
-        <!-- Basic Info -->
-        <label for="first_name">First Name:</label>
-        <input type="text" name="first_name" id="first_name" required><br><br>
+    <h2>User Sign Up</h2>
 
-        <label for="last_name">Last Name:</label>
-        <input type="text" name="last_name" id="last_name" required><br><br>
+    <?php if(isset($_SESSION['success'])) { echo "<p style='color:green;'>".$_SESSION['success']."</p>"; unset($_SESSION['success']); } ?>
 
-        <label for="age">Age:</label>
-        <input type="number" name="age" id="age" required><br><br>
+    <form method="POST">
+        <label>First Name:</label>
+        <input type="text" name="first_name" required><br><br>
 
-        <label for="gender">Gender:</label>
-        <select name="gender" id="gender" required>
+        <label>Last Name:</label>
+        <input type="text" name="last_name" required><br><br>
+
+        <label>Age:</label>
+        <input type="number" name="age" required><br><br>
+
+        <label>Gender:</label>
+        <select name="gender" required>
             <option value="">Select Gender</option>
-            <option value="Male">Male</option>
-            <option value="Female">Female</option>
-            <option value="Other">Other</option>
+            <option>Male</option>
+            <option>Female</option>
         </select><br><br>
 
-        <!-- Email -->
-        <label for="email">Email:</label>
-        <input type="email" name="email" id="email" required>
-        <span id="email_error" style="color:red;"></span><br><br>
+        <label>Email:</label>
+        <input type="email" name="email" required><br><br>
 
-        <!-- Phone -->
-        <label for="phone">Phone Number:</label>
-        <input type="text" name="phone" id="phone" required>
-        <span id="phone_error" style="color:red;"></span><br><br>
+        <label>Phone:</label>
+        <input type="text" name="phone" required><br><br>
 
-        <!-- Role Selection -->
-        <label for="role">User Type:</label>
+        <label>User Type:</label>
         <select name="role" id="role" required>
             <option value="">Select Role</option>
             <option value="Student">Student</option>
@@ -49,108 +101,63 @@
             <option value="Faculty">Faculty</option>
         </select><br><br>
 
-        <!-- Student Fields -->
         <div id="student_fields" style="display:none;">
-            <label for="student_id">Student ID:</label>
-            <input type="text" name="student_id" id="student_id">
-            <span id="student_id_error" style="color:red;"></span><br><br>
-
-            <label for="course">Course:</label>
-            <input type="text" name="course" id="course"><br><br>
-
-            <label for="section">Section:</label>
-            <input type="text" name="section" id="section"><br><br>
+            <label>Student ID:</label>
+            <input type="text" name="student_id"><br><br>
+            <label>Course:</label>
+            <input type="text" name="course"><br><br>
+            <label>Section:</label>
+            <input type="text" name="section"><br><br>
         </div>
 
-        <!-- Customer Fields -->
         <div id="customer_fields" style="display:none;">
-            <label for="customer_id">Customer ID (Auto-Generated):</label>
+            <label>Customer ID (Auto):</label>
             <input type="text" name="customer_id" id="customer_id" readonly><br><br>
-
-            <label for="payment_plan">Select Plan:</label>
-            <select name="payment_plan" id="payment_plan">
+            <label>Plan:</label>
+            <select name="payment_plan">
                 <option value="">Select Plan</option>
-                <option value="1 Week">1 Week</option>
-                <option value="30 Days">30 Days</option>
-                <option value="2 Months">2 Months</option>
-                <option value="3 Months">3 Months</option>
+                <option>1 Day</option>
+                <option>1 Week</option>
+                <option>1 Month</option>
+                <option>3 Months</option>
+                <option>6 Months</option>
+                <option>1 Year</option>
             </select><br><br>
-
-            <label for="services">Select Services:</label>
-            <select name="services" id="services">
+            <label>Services:</label>
+            <select name="services">
                 <option value="">Select Services</option>
-                <option value="Gym Access">Gym Access</option>
-                <option value="Personal Trainer">Personal Trainer</option>
+                <option>Gym Access</option>
+                <option>Personal Trainer</option>
             </select><br><br>
         </div>
 
-        <!-- Faculty Fields -->
         <div id="faculty_fields" style="display:none;">
-            <label for="faculty_id">Faculty ID Number:</label>
-            <input type="text" name="faculty_id" id="faculty_id"><br><br>
-
-            <label for="faculty_dept">Faculty Department:</label>
-            <select name="faculty_dept" id="faculty_dept">
-                <option value="">Select Department</option>
-                <option value="COT">COT</option>
-                <option value="COE">COE</option>
-                <option value="CME">CME</option>
-                <option value="CEAS">CEAS</option>
-            </select><br><br>
+            <label>Faculty ID:</label>
+            <input type="text" name="faculty_id"><br><br>
+            <label>Department:</label>
+            <input type="text" name="faculty_dept"><br><br>
         </div>
 
-        <!-- Submit -->
-        <input type="submit" value="Register" id="submit_btn">
+        <!-- ✅ Waiver moved to bottom -->
+        <label><input type="checkbox" name="waiver"> I have submitted my waiver.</label><br><br>
+
+        <input type="submit" value="Register">
     </form>
 
     <p><a href="user_login.php">Back to Login</a></p>
 </div>
 
-<!-- Script -->
 <script>
-    $(document).ready(function () {
-        // Role switch logic
-        $('#role').on('change', function () {
-            let role = $(this).val();
-            $('#student_fields, #customer_fields, #faculty_fields').hide();
-
-            if (role === 'Student') {
-                $('#student_fields').show();
-                $('#customer_id').val('');
-            } else if (role === 'Customer') {
-                $('#customer_fields').show();
-                $('#customer_id').val(Math.floor(1000000 + Math.random() * 9000000));
-            } else if (role === 'Faculty') {
-                $('#faculty_fields').show();
-                $('#customer_id').val('');
-            }
-        });
-
-        // Check for duplicates
-        function checkDuplicate(field, value, errorElement) {
-            $.post('check_duplicate.php', { field: field, value: value }, function (response) {
-                if (response === 'exists') {
-                    $(errorElement).text('This ' + field + ' is already registered.');
-                    $('#submit_btn').prop('disabled', true);
-                } else {
-                    $(errorElement).text('');
-                    $('#submit_btn').prop('disabled', false);
-                }
-            });
-        }
-
-        $('#email').on('blur', function () {
-            checkDuplicate('email', $(this).val(), '#email_error');
-        });
-
-        $('#phone').on('blur', function () {
-            checkDuplicate('phone', $(this).val(), '#phone_error');
-        });
-
-        $('#student_id').on('blur', function () {
-            checkDuplicate('student_id', $(this).val(), '#student_id_error');
-        });
-    });
+$('#role').on('change', function() {
+    $('#student_fields, #customer_fields, #faculty_fields').hide();
+    let role = $(this).val();
+    if (role === 'Student') $('#student_fields').show();
+    if (role === 'Customer') {
+        $('#customer_fields').show();
+        $('#customer_id').val(Math.floor(1000000 + Math.random() * 9000000));
+    }
+    if (role === 'Faculty') $('#faculty_fields').show();
+});
 </script>
 </body>
 </html>
